@@ -197,7 +197,10 @@ export class Nav extends NavController implements AfterViewInit {
   }
 
   @ViewChild(NavPortal)
-  private set _np(val: NavPortal) {
+  get _np(): NavPortal {
+    return this.getPortal();
+  }
+  set _np(val: NavPortal) {
     this.setPortal(val);
   }
 }
