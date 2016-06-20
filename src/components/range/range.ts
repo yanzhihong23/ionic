@@ -4,6 +4,7 @@ import {NgIf, NgFor, NG_VALUE_ACCESSOR} from '@angular/common';
 import {Form} from '../../util/form';
 import {isTrueProperty, isNumber, isString, isPresent, clamp} from '../../util/util';
 import {Item} from '../item/item';
+import {UIEventManager} from '../../util/ui-event-manager';
 import {pointerCoord, Coordinates, raf} from '../../util/dom';
 import {Debouncer} from '../../util/debouncer';
 
@@ -214,10 +215,9 @@ export class Range {
   private _max: number = 100;
   private _step: number = 1;
   private _snaps: boolean = false;
-  private _removes: Function[] = [];
-  private _mouseRemove: Function;
-  private _debouncer: Debouncer = new Debouncer(0);
 
+  private _debouncer: Debouncer = new Debouncer(0);
+  private _events: UIEventManager = new UIEventManager();  
   /**
    * @private
    */
@@ -360,8 +360,10 @@ export class Range {
     this._renderer.setElementStyle(this._bar.nativeElement, 'right', barR);
 
     // add touchstart/mousedown listeners
-    this._renderer.listen(this._slider.nativeElement, 'touchstart', this.pointerDown.bind(this));
-    this._mouseRemove = this._renderer.listen(this._slider.nativeElement, 'mousedown', this.pointerDown.bind(this));
+    this._events.pointerEventsRef(this._slider,
+      this.pointerDown.bind(this),
+      this.pointerMove.bind(this),
+      this.pointerUp.bind(this));
 
     this.createTicks();
   }
@@ -369,23 +371,18 @@ export class Range {
   /**
    * @private
    */
-  pointerDown(ev: UIEvent) {
+  pointerDown(ev: UIEvent): boolean {
     // TODO: we could stop listening for events instead of checking this._disabled.
     // since there are a lot of events involved, this solution is
     // enough for the moment
     if (this._disabled) {
-      return;
+      return false;
     }
     console.debug(`range, ${ev.type}`);
 
     // prevent default so scrolling does not happen
     ev.preventDefault();
     ev.stopPropagation();
-
-    if (ev.type === 'touchstart') {
-      // if this was a touchstart, then let's remove the mousedown
-      this._mouseRemove && this._mouseRemove();
-    }
 
     // get the start coordinates
     this._start = pointerCoord(ev);
@@ -412,25 +409,11 @@ export class Range {
     // update the ratio for the active knob
     this.updateKnob(this._start, rect);
 
-    // ensure past listeners have been removed
-    this.clearListeners();
-
     // update the active knob's position
     this._active.position();
     this._pressed = this._active.pressed = true;
 
-    // add a move listener depending on touch/mouse
-    let renderer = this._renderer;
-    let removes = this._removes;
-
-    if (ev.type === 'touchstart') {
-      removes.push(renderer.listen(this._slider.nativeElement, 'touchmove', this.pointerMove.bind(this)));
-      removes.push(renderer.listen(this._slider.nativeElement, 'touchend', this.pointerUp.bind(this)));
-
-    } else {
-      removes.push(renderer.listenGlobal('body', 'mousemove', this.pointerMove.bind(this)));
-      removes.push(renderer.listenGlobal('window', 'mouseup', this.pointerUp.bind(this)));
-    }
+    return true;
   }
 
   /**
@@ -454,9 +437,6 @@ export class Range {
       this._active.position();
       this._pressed = this._active.pressed = true;
 
-    } else {
-      // ensure listeners have been removed
-      this.clearListeners();
     }
   }
 
@@ -478,21 +458,7 @@ export class Range {
 
     // clear the start coordinates and active knob
     this._start = this._active = null;
-
-    // ensure listeners have been removed
-    this.clearListeners();
-  }
-
-  /**
-   * @private
-   */
-  clearListeners() {
     this._pressed = this._knobs.first.pressed = this._knobs.last.pressed = false;
-
-    for (var i = 0; i < this._removes.length; i++) {
-      this._removes[i]();
-    }
-    this._removes.length = 0;
   }
 
   /**
@@ -710,7 +676,7 @@ export class Range {
    */
   ngOnDestroy() {
     this._form.deregister(this);
-    this.clearListeners();
+    this._events.unlistenAll();
   }
 }
 
