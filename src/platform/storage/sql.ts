@@ -100,12 +100,12 @@ export class SqlStorage extends StorageEngine {
   query(query: string, params = []): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        this._db.transaction((tx) => {
+        this._db.transaction((tx: any) => {
           tx.executeSql(query, params,
-            (tx, res) => resolve({ tx: tx, res: res }),
-            (tx, err) => reject({ tx: tx, err: err }));
+            (tx: any, res: any) => resolve({ tx: tx, res: res }),
+            (tx: any, err: any) => reject({ tx: tx, err: err }));
         },
-          (err) => reject({ err: err }));
+          (err: any) => reject({ err: err }));
       } catch (err) {
         reject({ err: err });
       }

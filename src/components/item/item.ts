@@ -1,4 +1,5 @@
 import {Component, ContentChildren, forwardRef, ViewChild, ContentChild, Renderer, ElementRef, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
+import {NgIf} from '@angular/common';
 
 import {Button} from '../button/button';
 import {Form} from '../../util/form';
@@ -242,6 +243,7 @@ import {Label} from '../label/label';
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
+  directives: [NgIf]
 })
 export class Item {
   private _ids: number = -1;

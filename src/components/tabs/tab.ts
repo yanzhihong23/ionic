@@ -1,4 +1,5 @@
 import {Component, Inject, forwardRef, ElementRef, NgZone, Renderer, ComponentResolver, ViewContainerRef, ViewChild, Type, ViewEncapsulation, ChangeDetectorRef, EventEmitter, Input, Output} from '@angular/core';
+import {NgIf} from '@angular/common';
 
 import {App} from '../app/app';
 import {Config} from '../../config/config';
@@ -125,6 +126,7 @@ import {ViewController} from '../nav/view-controller';
   },
   template: '<div #viewport></div>',
   encapsulation: ViewEncapsulation.None,
+  directives: [NgIf]
 })
 export class Tab extends NavController {
   private _isInitial: boolean;

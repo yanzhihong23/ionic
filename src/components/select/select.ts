@@ -1,5 +1,5 @@
 import {Component, Optional, ElementRef, Renderer, Input, Output, Provider, forwardRef, EventEmitter, HostListener, ContentChildren, QueryList, ViewEncapsulation} from '@angular/core';
-import {NG_VALUE_ACCESSOR} from '@angular/common';
+import {NgIf, NG_VALUE_ACCESSOR} from '@angular/common';
 
 import {Alert} from '../alert/alert';
 import {ActionSheet} from '../action-sheet/action-sheet';
@@ -9,7 +9,7 @@ import {merge, isTrueProperty, isBlank, isCheckedProperty} from '../../util/util
 import {NavController} from '../nav/nav-controller';
 import {Option} from '../option/option';
 
-const SELECT_VALUE_ACCESSOR = new Provider(
+export const SELECT_VALUE_ACCESSOR = new Provider(
     NG_VALUE_ACCESSOR, {useExisting: forwardRef(() => Select), multi: true});
 
 
@@ -133,6 +133,7 @@ const SELECT_VALUE_ACCESSOR = new Provider(
   },
   providers: [SELECT_VALUE_ACCESSOR],
   encapsulation: ViewEncapsulation.None,
+  directives: [NgIf]
 })
 export class Select {
   private _disabled: any = false;

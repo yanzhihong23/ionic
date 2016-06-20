@@ -1,5 +1,5 @@
 import {Component, Optional, ElementRef, ViewChild, ViewEncapsulation} from '@angular/core';
-import {NgControl} from '@angular/common';
+import {NgModel, NgControl, NgIf} from '@angular/common';
 
 import {Config} from '../../config/config';
 import {Content} from '../content/content';
@@ -82,6 +82,8 @@ import {Platform} from '../../platform/platform';
   directives: [
     NextInput,
     NativeInput,
+    NgModel,
+    NgIf
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -172,7 +174,9 @@ export class TextInput extends InputBase {
     '<div (touchstart)="pointerStart($event)" (touchend)="pointerEnd($event)" (mousedown)="pointerStart($event)" (mouseup)="pointerEnd($event)" class="input-cover" tappable *ngIf="_useAssist"></div>',
   directives: [
     NextInput,
-    NativeInput
+    NativeInput,
+    NgModel,
+    NgIf
   ],
   encapsulation: ViewEncapsulation.None,
 })

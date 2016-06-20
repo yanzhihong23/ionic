@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Output, Renderer} from '@angular/core';
+import {NgIf} from '@angular/common';
 
 import {ActionSheet, ActionSheetOptions} from '../action-sheet/action-sheet';
 import {Animation} from '../../animations/animation';
@@ -157,6 +158,7 @@ const TOAST_POSITION_BOTTOM: string = 'bottom';
     '[attr.aria-labelledby]': 'hdrId',
     '[attr.aria-describedby]': 'descId',
   },
+  directives: [NgIf]
 })
 class ToastCmp implements AfterViewInit {
   private d: any;

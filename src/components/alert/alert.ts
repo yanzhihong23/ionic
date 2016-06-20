@@ -1,4 +1,5 @@
 import {Component, ElementRef, Renderer, HostListener, ViewEncapsulation} from '@angular/core';
+import {NgIf} from '@angular/common';
 
 import {Animation} from '../../animations/animation';
 import {Transition, TransitionOptions} from '../../transitions/transition';
@@ -364,6 +365,7 @@ export class Alert extends ViewController {
     '[attr.aria-describedby]': 'descId'
   },
   encapsulation: ViewEncapsulation.None,
+  directives: [NgIf]
 })
 class AlertCmp {
   private activeId: string;

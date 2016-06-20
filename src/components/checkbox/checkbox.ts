@@ -5,7 +5,7 @@ import {Form} from '../../util/form';
 import {Item} from '../item/item';
 import {isTrueProperty} from '../../util/util';
 
-const CHECKBOX_VALUE_ACCESSOR = new Provider(
+export const CHECKBOX_VALUE_ACCESSOR = new Provider(
     NG_VALUE_ACCESSOR, {useExisting: forwardRef(() => Checkbox), multi: true});
 
 

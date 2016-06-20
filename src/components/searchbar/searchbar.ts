@@ -1,5 +1,5 @@
 import {Component, Directive, ElementRef, EventEmitter, HostBinding, Input, Optional, Output, ViewChild, ViewEncapsulation} from '@angular/core';
-import {NgControl} from '@angular/common';
+import {NgModel, NgControl} from '@angular/common';
 
 import {Config} from '../../config/config';
 import {isPresent} from '../../util/util';
@@ -43,7 +43,10 @@ import {Debouncer} from '../../util/debouncer';
       '<button clear class="searchbar-clear-icon" (click)="clearInput($event)" (mousedown)="clearInput($event)"></button>' +
     '</div>' +
     '<button #cancelButton [tabindex]="_isActive ? 1 : -1" clear (click)="cancelSearchbar($event)" (mousedown)="cancelSearchbar($event)" class="searchbar-ios-cancel">{{cancelButtonText}}</button>',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  directives: [
+    NgModel
+  ],
 })
 export class Searchbar {
   private _value: string|number = '';

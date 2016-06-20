@@ -32,7 +32,7 @@ class E2EPage {
 
 
 @Component({
-  template: '<ion-nav [root]="root"></ion-nav>',
+  template: '<ion-nav [root]="root"></ion-nav>'
 })
 class E2EApp {
   root = E2EPage;

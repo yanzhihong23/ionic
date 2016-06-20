@@ -1,4 +1,5 @@
 import {Component, Directive, ElementRef, Optional, Host, forwardRef, ViewContainerRef, ViewChild, ViewChildren, EventEmitter, Output, Input, Renderer, ViewEncapsulation} from '@angular/core';
+import {NgIf, NgFor} from '@angular/common';
 
 import {App} from '../app/app';
 import {Config} from '../../config/config';
@@ -153,7 +154,9 @@ import {ViewController} from '../nav/view-controller';
   directives: [
     TabButton,
     TabHighlight,
-    forwardRef(() => TabNavBarAnchor)
+    forwardRef(() => TabNavBarAnchor),
+    NgIf,
+    NgFor
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -510,7 +513,7 @@ let tabIds = -1;
  * @private
  */
 @Directive({selector: 'template[navbar-anchor]'})
-class TabNavBarAnchor {
+export class TabNavBarAnchor {
   constructor(@Host() tabs: Tabs, viewContainerRef: ViewContainerRef) {
     tabs.navbarContainerRef = viewContainerRef;
   }

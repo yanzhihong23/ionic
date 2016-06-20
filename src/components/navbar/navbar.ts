@@ -16,7 +16,7 @@ import {NavController} from '../nav/nav-controller';
     '(click)': 'goBack($event)'
   }
 })
-class BackButton extends Ion {
+export class BackButton extends Ion {
   constructor(
     @Optional() private _nav: NavController,
     elementRef: ElementRef,
@@ -37,7 +37,7 @@ class BackButton extends Ion {
 @Directive({
   selector: '.back-button-text'
 })
-class BackButtonText {
+export class BackButtonText {
   constructor(
     elementRef: ElementRef,
     @Inject(forwardRef(() => Navbar)) navbar: Navbar
@@ -50,7 +50,7 @@ class BackButtonText {
 @Directive({
   selector: '.toolbar-background'
 })
-class ToolbarBackground {
+export class ToolbarBackground {
   constructor(
     elementRef: ElementRef,
     @Inject(forwardRef(() => Navbar)) navbar: Navbar

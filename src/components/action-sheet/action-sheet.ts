@@ -1,4 +1,5 @@
 import {Component, Renderer, ElementRef, HostListener, ViewEncapsulation} from '@angular/core';
+import {NgIf} from '@angular/common';
 
 import {Animation} from '../../animations/animation';
 import {Transition, TransitionOptions} from '../../transitions/transition';
@@ -241,6 +242,7 @@ export class ActionSheet extends ViewController {
     '[attr.aria-describedby]': 'descId'
   },
   encapsulation: ViewEncapsulation.None,
+  directives: [NgIf]
 })
 class ActionSheetCmp {
   private d: any;

@@ -7,7 +7,7 @@ import {Item} from '../item/item';
 import {pointerCoord} from '../../util/dom';
 
 
-const TOGGLE_VALUE_ACCESSOR = new Provider(
+export const TOGGLE_VALUE_ACCESSOR = new Provider(
     NG_VALUE_ACCESSOR, {useExisting: forwardRef(() => Toggle), multi: true});
 
 

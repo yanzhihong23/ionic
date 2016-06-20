@@ -9,7 +9,7 @@ import {merge, isBlank, isPresent, isTrueProperty, isArray, isString} from '../.
 import {dateValueRange, renderDateTime, renderTextFormat, convertFormatToKey, getValueFromFormat, parseTemplate, parseDate, updateDate, DateTimeData, convertDataToISO, daysInMonth, dateSortValue, dateDataSortValue, LocaleData} from '../../util/datetime-util';
 import {NavController} from '../nav/nav-controller';
 
-const DATETIME_VALUE_ACCESSOR = new Provider(
+export const DATETIME_VALUE_ACCESSOR = new Provider(
     NG_VALUE_ACCESSOR, {useExisting: forwardRef(() => DateTime), multi: true});
 
 

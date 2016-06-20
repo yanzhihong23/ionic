@@ -1,5 +1,5 @@
 import {Component, Optional, Input, Output, EventEmitter, ViewChild, ViewChildren, QueryList, Renderer, ElementRef, Provider, Inject, forwardRef, ViewEncapsulation} from '@angular/core';
-import {NG_VALUE_ACCESSOR} from '@angular/common';
+import {NgIf, NgFor, NG_VALUE_ACCESSOR} from '@angular/common';
 
 import {Form} from '../../util/form';
 import {isTrueProperty, isNumber, isString, isPresent, clamp} from '../../util/util';
@@ -8,7 +8,7 @@ import {pointerCoord, Coordinates, raf} from '../../util/dom';
 import {Debouncer} from '../../util/debouncer';
 
 
-const RANGE_VALUE_ACCESSOR = new Provider(
+export const RANGE_VALUE_ACCESSOR = new Provider(
     NG_VALUE_ACCESSOR, {useExisting: forwardRef(() => Range), multi: true});
 
 /**
@@ -31,7 +31,8 @@ const RANGE_VALUE_ACCESSOR = new Provider(
     '[attr.aria-valuemax]': 'range.max',
     'role': 'slider',
     'tabindex': '0'
-  }
+  },
+  directives: [NgIf]
 })
 export class RangeKnob {
   private _ratio: number;
@@ -190,7 +191,7 @@ export class RangeKnob {
     '[class.range-pressed]': '_pressed',
     '[class.range-has-pin]': '_pin'
   },
-  directives: [RangeKnob],
+  directives: [NgIf, NgFor, RangeKnob],
   providers: [RANGE_VALUE_ACCESSOR],
   encapsulation: ViewEncapsulation.None,
 })
