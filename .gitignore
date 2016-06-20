@@ -30,3 +30,4 @@ scripts/resources/web-animations-js/**/*.yml
 scripts/resources/web-animations-js/**/*.gz
 
 .package.tmp.json
+.vscode
