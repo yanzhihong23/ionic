@@ -103,7 +103,6 @@ export class ItemSlidingGesture extends DragGesture {
 
   unlisten() {
     super.unlisten();
-    this.listEle = null;
   }
 }
 

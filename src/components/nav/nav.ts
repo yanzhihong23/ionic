@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewContainerRef, ComponentResolver, Input, Optional, NgZone, Renderer, ViewChild, ViewEncapsulation, AfterViewInit} from '@angular/core';
+import {QueryList, Component, ElementRef, ViewContainerRef, ComponentResolver, Input, Optional, NgZone, Renderer, ViewChild, ViewChildren, ViewEncapsulation, AfterViewInit} from '@angular/core';
 
 import {App} from '../app/app';
 import {Config} from '../../config/config';
@@ -196,11 +196,11 @@ export class Nav extends NavController implements AfterViewInit {
     this._sbEnabled = isTrueProperty(val);
   }
 
-  @ViewChild(NavPortal)
-  get _np(): NavPortal {
-    return this.getPortal();
+  @ViewChildren(NavPortal)
+  get _np(): QueryList<NavPortal> {
+    return null;
   }
-  set _np(val: NavPortal) {
-    this.setPortal(val);
+  set _np(val: QueryList<NavPortal>) {
+    this.setPortal(val.first);
   }
 }

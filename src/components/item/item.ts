@@ -243,10 +243,12 @@ import {ItemReorder} from './item-reorder';
   host: {
     'class': 'item'
   },
-  directives: [forwardRef(() => ItemReorder)],
+  directives: [
+    forwardRef(() => ItemReorder),
+    NgIf
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  directives: [NgIf]
 })
 export class Item {
   private _ids: number = -1;
