@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, forwardRef, Input, Inject, Optional, Output, Provider, QueryList, Renderer, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/common';
 import { NgIf, NgFor, NG_VALUE_ACCESSOR } from '@angular/common';
 
 import { clamp, isNumber, isPresent, isString, isTrueProperty } from '../../util/util';

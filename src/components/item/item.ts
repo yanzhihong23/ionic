@@ -282,17 +282,10 @@ import { Label } from '../label/label';
       '<ion-reorder></ion-reorder>' +
     '</div>' +
     '<ion-button-effect></ion-button-effect>',
-<<<<<<< HEAD
-  host: {
-    'class': 'item'
-  },
   directives: [
     forwardRef(() => ItemReorder),
     NgIf
   ],
-=======
-  directives: [forwardRef(() => ItemReorder)],
->>>>>>> master
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
@@ -305,14 +298,6 @@ export class Item {
   /**
    * @private
    */
-<<<<<<< HEAD
-  @Input() index: number;
-
-  /**
-   * @private
-   */
-=======
->>>>>>> master
   id: string;
 
   /**
@@ -405,10 +390,6 @@ export class Item {
   /**
    * @private
    */
-<<<<<<< HEAD
-  height(): number {
-    return this._elementRef.nativeElement.offsetHeight;
-=======
   setCssClass(cssClass: string, shouldAdd: boolean) {
     this._renderer.setElementClass(this._elementRef.nativeElement, cssClass, shouldAdd);
   }
@@ -425,7 +406,6 @@ export class Item {
    */
   getNativeElement(): HTMLElement {
     return this._elementRef.nativeElement;
->>>>>>> master
   }
 }
 

@@ -537,14 +537,3 @@ export class Tabs extends Ion {
 }
 
 let tabIds = -1;
-
-
-/**
- * @private
- */
-@Directive({selector: 'template[navbar-anchor]'})
-export class TabNavBarAnchor {
-  constructor(@Host() tabs: Tabs, viewContainerRef: ViewContainerRef) {
-    tabs.navbarContainerRef = viewContainerRef;
-  }
-}

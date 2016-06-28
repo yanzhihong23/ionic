@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ComponentResolver, ElementRef, Input, Optional, NgZone, Renderer, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { QueryList, AfterViewInit, Component, ComponentResolver, ElementRef, Input, Optional, NgZone, Renderer, ViewChildren, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 
 import { App } from '../app/app';
 import { Config } from '../../config/config';

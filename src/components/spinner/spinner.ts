@@ -105,13 +105,10 @@ import { Config } from '../../config/config';
     '<svg viewBox="0 0 64 64" *ngFor="let i of _l" [ngStyle]="i.style">' +
      '<line [attr.y1]="i.y1" [attr.y2]="i.y2" transform="translate(32,32)"></line>' +
     '</svg>',
-<<<<<<< HEAD
   directives: [
     NgStyle,
     NgFor
   ],
-=======
->>>>>>> master
   host: {
     '[class]': '_applied',
     '[class.spinner-paused]': 'paused'
