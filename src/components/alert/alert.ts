@@ -195,7 +195,6 @@ export class Alert extends ViewController {
     opts.enableBackdropDismiss = isPresent(opts.enableBackdropDismiss) ? !!opts.enableBackdropDismiss : true;
 
     super(AlertCmp, opts);
-    this.viewType = 'alert';
     this.isOverlay = true;
 
     // by default, alerts should not fire lifecycle events of other views
@@ -322,7 +321,7 @@ export class Alert extends ViewController {
       '<div id="{{msgId}}" class="alert-message" [innerHTML]="d.message"></div>' +
       '<div *ngIf="d.inputs.length" [ngSwitch]="inputType">' +
 
-        '<template ngSwitchWhen="radio">' +
+        '<template ngSwitchCase="radio">' +
           '<div class="alert-radio-group" role="radiogroup" [attr.aria-labelledby]="hdrId" [attr.aria-activedescendant]="activeId">' +
             '<button category="alert-radio-button" *ngFor="let i of d.inputs" (click)="rbClick(i)" [attr.aria-checked]="i.checked" [attr.id]="i.id" class="alert-tappable alert-radio" role="radio">' +
               '<div class="alert-radio-icon"><div class="alert-radio-inner"></div></div>' +
@@ -333,7 +332,7 @@ export class Alert extends ViewController {
           '</div>' +
         '</template>' +
 
-        '<template ngSwitchWhen="checkbox">' +
+        '<template ngSwitchCase="checkbox">' +
           '<div class="alert-checkbox-group">' +
             '<button category="alert-checkbox-button" *ngFor="let i of d.inputs" (click)="cbClick(i)" [attr.aria-checked]="i.checked" class="alert-tappable alert-checkbox" role="checkbox">' +
               '<div class="alert-checkbox-icon"><div class="alert-checkbox-inner"></div></div>' +
@@ -573,7 +572,7 @@ class AlertCmp {
 
     // this is an alert with text inputs
     // return an object of all the values with the input name as the key
-    let values = {};
+    let values: {[k: string]: string} = {};
     this.d.inputs.forEach(i => {
       values[i.name] = i.value;
     });
@@ -607,14 +606,14 @@ export interface AlertInputOptions {
  */
 class AlertPopIn extends Transition {
   constructor(enteringView: ViewController, leavingView: ViewController, opts: TransitionOptions) {
-    super(opts);
+    super(enteringView, leavingView, opts);
 
     let ele = enteringView.pageRef().nativeElement;
     let backdrop = new Animation(ele.querySelector('ion-backdrop'));
     let wrapper = new Animation(ele.querySelector('.alert-wrapper'));
 
-    wrapper.fromTo('opacity', '0.01', '1').fromTo('scale', '1.1', '1');
-    backdrop.fromTo('opacity', '0.01', '0.3');
+    wrapper.fromTo('opacity', 0.01, 1).fromTo('scale', 1.1, 1);
+    backdrop.fromTo('opacity', 0.01, 0.3);
 
     this
       .easing('ease-in-out')
@@ -628,14 +627,14 @@ Transition.register('alert-pop-in', AlertPopIn);
 
 class AlertPopOut extends Transition {
   constructor(enteringView: ViewController, leavingView: ViewController, opts: TransitionOptions) {
-    super(opts);
+    super(enteringView, leavingView, opts);
 
     let ele = leavingView.pageRef().nativeElement;
     let backdrop = new Animation(ele.querySelector('ion-backdrop'));
     let wrapper = new Animation(ele.querySelector('.alert-wrapper'));
 
-    wrapper.fromTo('opacity', '1', '0').fromTo('scale', '1', '0.9');
-    backdrop.fromTo('opacity', '0.3', '0');
+    wrapper.fromTo('opacity', 0.99, 0).fromTo('scale', 1, 0.9);
+    backdrop.fromTo('opacity', 0.3, 0);
 
     this
       .easing('ease-in-out')
@@ -649,14 +648,14 @@ Transition.register('alert-pop-out', AlertPopOut);
 
 class AlertMdPopIn extends Transition {
   constructor(enteringView: ViewController, leavingView: ViewController, opts: TransitionOptions) {
-    super(opts);
+    super(enteringView, leavingView, opts);
 
     let ele = enteringView.pageRef().nativeElement;
     let backdrop = new Animation(ele.querySelector('ion-backdrop'));
     let wrapper = new Animation(ele.querySelector('.alert-wrapper'));
 
-    wrapper.fromTo('opacity', '0.01', '1').fromTo('scale', '1.1', '1');
-    backdrop.fromTo('opacity', '0.01', '0.5');
+    wrapper.fromTo('opacity', 0.01, 1).fromTo('scale', 1.1, 1);
+    backdrop.fromTo('opacity', 0.01, 0.5);
 
     this
       .easing('ease-in-out')
@@ -670,14 +669,14 @@ Transition.register('alert-md-pop-in', AlertMdPopIn);
 
 class AlertMdPopOut extends Transition {
   constructor(enteringView: ViewController, leavingView: ViewController, opts: TransitionOptions) {
-    super(opts);
+    super(enteringView, leavingView, opts);
 
     let ele = leavingView.pageRef().nativeElement;
     let backdrop = new Animation(ele.querySelector('ion-backdrop'));
     let wrapper = new Animation(ele.querySelector('.alert-wrapper'));
 
-    wrapper.fromTo('opacity', '1', '0').fromTo('scale', '1', '0.9');
-    backdrop.fromTo('opacity', '0.5', '0');
+    wrapper.fromTo('opacity', 0.99, 0).fromTo('scale', 1, 0.9);
+    backdrop.fromTo('opacity', 0.5, 0);
 
     this
       .easing('ease-in-out')
@@ -692,14 +691,14 @@ Transition.register('alert-md-pop-out', AlertMdPopOut);
 
 class AlertWpPopIn extends Transition {
   constructor(enteringView: ViewController, leavingView: ViewController, opts: TransitionOptions) {
-    super(opts);
+    super(enteringView, leavingView, opts);
 
     let ele = enteringView.pageRef().nativeElement;
     let backdrop = new Animation(ele.querySelector('ion-backdrop'));
     let wrapper = new Animation(ele.querySelector('.alert-wrapper'));
 
-    wrapper.fromTo('opacity', '0.01', '1').fromTo('scale', '1.3', '1');
-    backdrop.fromTo('opacity', '0.01', '0.5');
+    wrapper.fromTo('opacity', 0.01, 1).fromTo('scale', 1.3, 1);
+    backdrop.fromTo('opacity', 0.01, 0.5);
 
     this
       .easing('cubic-bezier(0,0 0.05,1)')
@@ -713,14 +712,14 @@ Transition.register('alert-wp-pop-in', AlertWpPopIn);
 
 class AlertWpPopOut extends Transition {
   constructor(enteringView: ViewController, leavingView: ViewController, opts: TransitionOptions) {
-    super(opts);
+    super(enteringView, leavingView, opts);
 
     let ele = leavingView.pageRef().nativeElement;
     let backdrop = new Animation(ele.querySelector('ion-backdrop'));
     let wrapper = new Animation(ele.querySelector('.alert-wrapper'));
 
-    wrapper.fromTo('opacity', '1', '0').fromTo('scale', '1', '1.3');
-    backdrop.fromTo('opacity', '0.5', '0');
+    wrapper.fromTo('opacity', 0.99, 0).fromTo('scale', 1, 1.3);
+    backdrop.fromTo('opacity', 0.5, 0);
 
     this
       .easing('ease-out')

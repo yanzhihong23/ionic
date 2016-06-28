@@ -1,8 +1,8 @@
-import {Directive, ElementRef, Optional, Input, HostListener} from '@angular/core';
+import { Directive, ElementRef, Input, HostListener, Optional } from '@angular/core';
 
-import {ViewController} from '../nav/view-controller';
-import {Navbar} from '../navbar/navbar';
-import {MenuController} from './menu-controller';
+import { MenuController } from './menu-controller';
+import { Navbar } from '../navbar/navbar';
+import { ViewController } from '../nav/view-controller';
 
 /**
  * @name MenuToggle
@@ -33,24 +33,28 @@ import {MenuController} from './menu-controller';
  * the `<ion-buttons>` element:
  *
  * ```html
- * <ion-navbar *navbar>
- *   <ion-buttons start>
- *     <button>
- *       <ion-icon name="contact"></ion-icon>
+ * <ion-header>
+ *
+ *   <ion-navbar>
+ *     <ion-buttons start>
+ *       <button>
+ *         <ion-icon name="contact"></ion-icon>
+ *       </button>
+ *     </ion-buttons>
+ *     <button menuToggle>
+ *       <ion-icon name="menu"></ion-icon>
  *     </button>
- *   </ion-buttons>
- *   <button menuToggle>
- *     <ion-icon name="menu"></ion-icon>
- *   </button>
- *   <ion-title>
- *     Title
- *   </ion-title>
- *   <ion-buttons end>
- *     <button (click)="doClick()">
- *       <ion-icon name="more"></ion-icon>
- *     </button>
- *   </ion-buttons>
- * </ion-navbar>
+ *     <ion-title>
+ *       Title
+ *     </ion-title>
+ *     <ion-buttons end>
+ *       <button (click)="doClick()">
+ *         <ion-icon name="more"></ion-icon>
+ *       </button>
+ *     </ion-buttons>
+ *   </ion-navbar>
+ *
+ * </ion-header>
  * ```
  *
  * Similar to `<ion-buttons>`, the `menuToggle` can be positioned using

@@ -1,10 +1,11 @@
-import {Component, ElementRef, Renderer, Input, Output, EventEmitter, Optional, Provider, forwardRef, ViewEncapsulation} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/common';
+import { Component, ElementRef, EventEmitter, forwardRef, Input, Optional, Output, Provider, Renderer, ViewEncapsulation } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/common';
 
-import {Form} from '../../util/form';
-import {isTrueProperty} from '../../util/util';
-import {Item} from '../item/item';
-import {pointerCoord} from '../../util/dom';
+import { Form } from '../../util/form';
+import { isTrueProperty } from '../../util/util';
+import { Item } from '../item/item';
+import { pointerCoord } from '../../util/dom';
+import { UIEventManager } from '../../util/ui-event-manager';
 
 
 export const TOGGLE_VALUE_ACCESSOR = new Provider(
@@ -21,8 +22,6 @@ export const TOGGLE_VALUE_ACCESSOR = new Provider(
  *
  * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
  * for more info on forms and inputs.
- * @property {boolean} [checked] - whether the toggle it toggled or not
- * @property {boolean} [disabled] - whether the toggle is disabled or not
  *
  * @usage
  * ```html
@@ -63,13 +62,6 @@ export const TOGGLE_VALUE_ACCESSOR = new Provider(
             '[attr.aria-checked]="_checked" ' +
             '[attr.aria-labelledby]="_labelId" ' +
             '[attr.aria-disabled]="_disabled" ' +
-            '(touchstart)=pointerDown($event) ' +
-            '(touchmove)=pointerMove($event) ' +
-            '(mousemove)=pointerMove($event) ' +
-            '(mousedown)=pointerDown($event) ' +
-            '(touchend)=pointerUp($event) ' +
-            '(mouseup)=pointerUp($event) ' +
-            '(mouseout)=pointerUp($event) ' +
             'class="item-cover">' +
     '</button>',
   host: {
@@ -87,6 +79,7 @@ export class Toggle implements ControlValueAccessor  {
   private _startX: number;
   private _msPrv: number = 0;
   private _fn: Function;
+  private _events: UIEventManager = new UIEventManager();
 
   /**
    * @private
@@ -96,7 +89,7 @@ export class Toggle implements ControlValueAccessor  {
   /**
    * @output {Toggle} expression to evaluate when the toggle value changes
    */
-  @Output() ionChange: EventEmitter<Toggle> = new EventEmitter();
+  @Output() ionChange: EventEmitter<Toggle> = new EventEmitter<Toggle>();
 
   constructor(
     private _form: Form,
@@ -116,13 +109,10 @@ export class Toggle implements ControlValueAccessor  {
   /**
    * @private
    */
-  private pointerDown(ev: UIEvent) {
-    if (this._isPrevented(ev)) {
-      return;
-    }
-
+  private pointerDown(ev: UIEvent): boolean {
     this._startX = pointerCoord(ev).x;
     this._activated = true;
+    return true;
   }
 
   /**
@@ -130,10 +120,6 @@ export class Toggle implements ControlValueAccessor  {
    */
   private pointerMove(ev: UIEvent) {
     if (this._startX) {
-      if (this._isPrevented(ev)) {
-        return;
-      }
-
       let currentX = pointerCoord(ev).x;
       console.debug('toggle, pointerMove', ev.type, currentX);
 
@@ -157,11 +143,6 @@ export class Toggle implements ControlValueAccessor  {
    */
   private pointerUp(ev: UIEvent) {
     if (this._startX) {
-
-      if (this._isPrevented(ev)) {
-        return;
-      }
-
       let endX = pointerCoord(ev).x;
 
       if (this.checked) {
@@ -178,6 +159,9 @@ export class Toggle implements ControlValueAccessor  {
     }
   }
 
+  /**
+   * @input {boolean} whether the toggle it toggled or not
+   */
   @Input()
   get checked(): boolean {
     return this._checked;
@@ -188,9 +172,7 @@ export class Toggle implements ControlValueAccessor  {
     this.onChange(this._checked);
   }
 
-  /**
-   * @private
-   */
+
   private _setChecked(isChecked: boolean) {
     if (isChecked !== this._checked) {
       this._checked = isChecked;
@@ -226,6 +208,9 @@ export class Toggle implements ControlValueAccessor  {
    */
   registerOnTouched(fn: any) { this.onTouched = fn; }
 
+  /**
+   * @input {boolean} whether the toggle is disabled or not
+   */
   @Input()
   get disabled(): boolean {
     return this._disabled;
@@ -256,6 +241,11 @@ export class Toggle implements ControlValueAccessor  {
    */
   ngAfterContentInit() {
     this._init = true;
+    this._events.pointerEventsRef(this._elementRef,
+      (ev: any) => this.pointerDown(ev),
+      (ev: any) => this.pointerMove(ev),
+      (ev: any) => this.pointerUp(ev)
+    );
   }
 
   /**
@@ -263,20 +253,7 @@ export class Toggle implements ControlValueAccessor  {
    */
   ngOnDestroy() {
     this._form.deregister(this);
-  }
-
-  /**
-   * @private
-   */
-  private _isPrevented(ev: UIEvent) {
-    if (ev.type.indexOf('touch') > -1) {
-      this._msPrv = Date.now() + 2000;
-
-    } else if (this._msPrv > Date.now() && ev.type.indexOf('mouse') > -1) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      return true;
-    }
+    this._events.unlistenAll();
   }
 
 }

@@ -1,16 +1,52 @@
-import {Component} from '@angular/core';
-import {ionicBootstrap, ItemSliding, Toast, NavController} from 'ionic-angular';
+import { Component, ViewEncapsulation } from '@angular/core';
+
+import { ionicBootstrap, ItemSliding, NavController, Toast } from 'ionic-angular';
 
 
 @Component({
-  templateUrl: 'main.html'
+  templateUrl: 'main.html',
+  encapsulation: ViewEncapsulation.None
 })
-class InitialPage {
+class ApiDemoPage {
   chats: any[];
   logins: any[];
+  editButton: string = 'Edit';
+  editing: boolean = false;
 
   constructor(private nav: NavController) {
     this.chats = [
+    {
+      img: './avatar-cher.png',
+      name: 'Cher',
+      message: 'Ugh. As if.',
+      time: '9:38 pm'
+    }, {
+      img: './avatar-dionne.png',
+      name: 'Dionne',
+      message: 'Mr. Hall was way harsh.',
+      time: '8:59 pm'
+    }, {
+      img: './avatar-murray.png',
+      name: 'Murray',
+      message: 'Excuse me, "Ms. Dione."',
+      time: 'Wed'
+    },
+    {
+      img: './avatar-cher.png',
+      name: 'Cher',
+      message: 'Ugh. As if.',
+      time: '9:38 pm'
+    }, {
+      img: './avatar-dionne.png',
+      name: 'Dionne',
+      message: 'Mr. Hall was way harsh.',
+      time: '8:59 pm'
+    }, {
+      img: './avatar-murray.png',
+      name: 'Murray',
+      message: 'Excuse me, "Ms. Dione."',
+      time: 'Wed'
+    },
     {
       img: './avatar-cher.png',
       name: 'Cher',
@@ -46,6 +82,15 @@ class InitialPage {
         name: 'Codepen',
         username: 'administrator',
     }];
+  }
+
+  toggleEdit() {
+    this.editing = !this.editing;
+    if (this.editing) {
+      this.editButton = 'Done';
+    } else {
+      this.editButton = 'Edit';
+    }
   }
 
   more(item: ItemSliding) {
@@ -89,7 +134,7 @@ class InitialPage {
   template: '<ion-nav [root]="root"></ion-nav>'
 })
 class ApiDemoApp {
-  root = InitialPage;
+  root = ApiDemoPage;
 }
 
 ionicBootstrap(ApiDemoApp);

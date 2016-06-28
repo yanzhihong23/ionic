@@ -1,9 +1,10 @@
-import {Output, EventEmitter, Type, TemplateRef, ViewContainerRef, ElementRef, Renderer, ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectorRef, EventEmitter, ElementRef, Output, Renderer } from '@angular/core';
 
-import {Navbar} from '../navbar/navbar';
-import {NavController, NavOptions} from './nav-controller';
-import {NavParams} from './nav-params';
-import {isPresent, merge} from '../../util/util';
+import { Footer, Header } from '../toolbar/toolbar';
+import { isPresent, merge } from '../../util/util';
+import { Navbar } from '../navbar/navbar';
+import { NavController, NavOptions } from './nav-controller';
+import { NavParams } from './nav-params';
 
 
 /**
@@ -12,8 +13,8 @@ import {isPresent, merge} from '../../util/util';
  * Access various features and information about the current view.
  * @usage
  *  ```ts
- * import {Component} from '@angular/core';
- * import {ViewController} from 'ionic-angular';
+ * import { Component } from '@angular/core';
+ * import { ViewController } from 'ionic-angular';
  *
  * @Component({...})
  * export class MyPage{
@@ -27,13 +28,13 @@ export class ViewController {
   private _cntDir: any;
   private _cntRef: ElementRef;
   private _tbRefs: ElementRef[] = [];
-  private _destroys: Function[] = [];
+  private _hdrDir: Header;
+  private _ftrDir: Footer;
+  private _destroyFn: Function;
   private _hdAttr: string = null;
   private _leavingOpts: NavOptions = null;
   private _loaded: boolean = false;
   private _nbDir: Navbar;
-  private _nbTmpRef: TemplateRef<Object>;
-  private _nbVwRef: ViewContainerRef;
   private _onDismiss: Function = null;
   private _pgRef: ElementRef;
   private _cd: ChangeDetectorRef;
@@ -65,11 +66,6 @@ export class ViewController {
    * @private
    */
   state: string = '';
-
-  /**
-   * @private
-   */
-  viewType: string = '';
 
   /**
    * @private
@@ -110,6 +106,9 @@ export class ViewController {
     this.didUnload = new EventEmitter();
   }
 
+  /**
+   * @private
+   */
   subscribe(generatorOrNext?: any): any {
     return this._emitter.subscribe(generatorOrNext);
   }
@@ -121,10 +120,16 @@ export class ViewController {
     this._emitter.emit(data);
   }
 
+  /**
+   * @private
+   */
   onDismiss(callback: Function) {
     this._onDismiss = callback;
   }
 
+  /**
+   * @private
+   */
   dismiss(data?: any, role?: any, navOptions: NavOptions = {}) {
     let options = merge({}, this._leavingOpts, navOptions);
     return this._nav.remove(this._nav.indexOf(this), 1, options).then(() => {
@@ -138,6 +143,13 @@ export class ViewController {
    */
   setNav(navCtrl: NavController) {
     this._nav = navCtrl;
+  }
+
+  /**
+   * @private
+   */
+  getNav() {
+    return this._nav;
   }
 
   /**
@@ -201,29 +213,19 @@ export class ViewController {
   /**
    * You can find out the index of the current view is in the current navigation stack.
    *
-   * ```typescript
+   * ```ts
    *  export class Page1 {
-   *    constructor(view: ViewController){
-   *      this.view = view;
+   *    constructor(private view: ViewController){
    *      // Just log out the index
    *      console.log(this.view.index);
    *    }
    *  }
    * ```
    *
-   * @returns {number} Returns the index of this page within its NavController.
+   * @returns {number} Returns the index of this page within its `NavController`.
    */
   get index(): number {
     return (this._nav ? this._nav.indexOf(this) : -1);
-  }
-
-  /**
-   * @private
-   */
-  private isRoot(): boolean {
-    // deprecated warning
-    console.warn('ViewController isRoot() has been renamed to isFirst()');
-    return this.isFirst();
   }
 
   /**
@@ -255,11 +257,6 @@ export class ViewController {
       this._hdAttr = (shouldShow ? null : '');
 
       renderer.setElementAttribute(this._pgRef.nativeElement, 'hidden', this._hdAttr);
-
-      let navbarRef = this.navbarRef();
-      if (navbarRef) {
-        renderer.setElementAttribute(navbarRef.nativeElement, 'hidden', this._hdAttr);
-      }
     }
   }
 
@@ -271,34 +268,6 @@ export class ViewController {
       this.zIndex = zIndex;
       renderer.setElementStyle(this._pgRef.nativeElement, 'z-index', zIndex.toString());
     }
-  }
-
-  /**
-   * @private
-   */
-  setNavbarTemplateRef(templateRef: TemplateRef<Object>) {
-    this._nbTmpRef = templateRef;
-  }
-
-  /**
-   * @private
-   */
-  getNavbarTemplateRef(): TemplateRef<Object> {
-    return this._nbTmpRef;
-  }
-
-  /**
-   * @private
-   */
-  getNavbarViewRef() {
-    return this._nbVwRef;
-  }
-
-  /**
-   * @private
-   */
-  setNavbarViewRef(viewContainerRef: ViewContainerRef) {
-    this._nbVwRef = viewContainerRef;
   }
 
   /**
@@ -334,13 +303,19 @@ export class ViewController {
   /**
    * @private
    */
+  setContent(directive: any) {
+    this._cntDir = directive;
+  }
+
+  /**
+   * @private
+   */
   setToolbarRef(elementRef: ElementRef) {
     this._tbRefs.push(elementRef);
   }
 
   /**
    * @private
-   * @returns {elementRef} Returns the Page's Content ElementRef
    */
   toolbarRefs(): ElementRef[] {
     return this._tbRefs;
@@ -349,8 +324,29 @@ export class ViewController {
   /**
    * @private
    */
-  setContent(directive: any) {
-    this._cntDir = directive;
+  setHeader(directive: Header) {
+    this._hdrDir = directive;
+  }
+
+  /**
+   * @private
+   */
+  getHeader() {
+    return this._hdrDir;
+  }
+
+  /**
+   * @private
+   */
+  setFooter(directive: Footer) {
+    this._ftrDir = directive;
+  }
+
+  /**
+   * @private
+   */
+  getFooter() {
+    return this._ftrDir;
   }
 
   /**
@@ -376,15 +372,16 @@ export class ViewController {
   }
 
   /**
-   * You can find out of the current view has a Navbar or not. Be sure to wrap this in an `ionViewWillEnter` method in order to make sure the view has rendered fully.
+   * You can find out of the current view has a Navbar or not. Be sure
+   * to wrap this in an `ionViewWillEnter` method in order to make sure
+   * the view has rendered fully.
    *
-   * ```typescript
+   * ```ts
    * export class Page1 {
-   *  constructor(view: ViewController) {
-   *    this.view = view
-   *  }
+   *  constructor(private viewCtrl: ViewController) {}
+   *
    *  ionViewWillEnter(){
-   *    console.log('Do we have a Navbar?', this.view.hasNavbar());
+   *    console.log('Do we have a Navbar?', this.viewCtrl.hasNavbar());
    *  }
    *}
    * ```
@@ -448,9 +445,8 @@ export class ViewController {
    *
    * ```ts
    * export class MyClass{
-   *  constructor(viewCtrl: ViewController){
-   *    this.viewCtrl = viewCtrl
-   *  }
+   *  constructor(private viewCtrl: ViewController) {}
+   *
    *  ionViewWillEnter() {
    *    this.viewCtrl.setBackButtonText('Previous');
    *  }
@@ -484,12 +480,14 @@ export class ViewController {
   isLoaded(): boolean {
     return this._loaded;
   }
+
   /**
    * The loaded method is used to load any dynamic content/components
-   * into the dom before proceeding with the transition.  If a component needs
-   * dynamic component loading, extending ViewController and overriding
-   * this method is a good option
-   * @param {function} done is a callback that must be called when async loading/actions are completed
+   * into the dom before proceeding with the transition.  If a component
+   * needs dynamic component loading, extending ViewController and
+   * overriding this method is a good option
+   * @param {function} done is a callback that must be called when async
+   * loading/actions are completed
    */
   loaded(done: (() => any)) {
     done();
@@ -572,7 +570,7 @@ export class ViewController {
    * @private
    */
   onDestroy(destroyFn: Function) {
-    this._destroys.push(destroyFn);
+    this._destroyFn = destroyFn;
   }
 
   /**
@@ -582,11 +580,8 @@ export class ViewController {
     this.didUnload.emit(null);
     ctrlFn(this, 'DidUnload');
 
-    for (var i = 0; i < this._destroys.length; i++) {
-      this._destroys[i]();
-    }
-    this._destroys.length = 0;
-    this._tbRefs.length = 0;
+    this._destroyFn && this._destroyFn();
+    this._destroyFn = null;
   }
 
 }

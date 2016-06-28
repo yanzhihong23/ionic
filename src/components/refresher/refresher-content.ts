@@ -1,8 +1,8 @@
-import {Component, Input, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
-import {NgIf} from '@angular/common';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { NgIf } from '@angular/common';
 
-import {Config} from '../../config/config';
-import {Refresher} from './refresher';
+import { Config } from '../../config/config';
+import { Refresher } from './refresher';
 
 
 /**

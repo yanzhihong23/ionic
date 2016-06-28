@@ -1,9 +1,9 @@
-import {Directive, ElementRef, EventEmitter, Host, Input, Output, NgZone} from '@angular/core';
+import { Directive, EventEmitter, Host, Input, Output, NgZone } from '@angular/core';
 
-import {Content} from '../content/content';
-import {Icon} from '../icon/icon';
-import {isTrueProperty} from '../../util/util';
-import {CSS, pointerCoord, transitionEnd} from '../../util/dom';
+import { Content } from '../content/content';
+import { CSS, pointerCoord } from '../../util/dom';
+import { isTrueProperty } from '../../util/util';
+import { PointerEvents, UIEventManager } from '../../util/ui-event-manager';
 
 
 /**
@@ -89,21 +89,18 @@ import {CSS, pointerCoord, transitionEnd} from '../../util/dom';
 @Directive({
   selector: 'ion-refresher',
   host: {
-    '[class.refresher-active]': 'state !== "inactive"'
+    '[class.refresher-active]': 'state !== "inactive"',
+    '[style.top]': '_top'
   }
 })
 export class Refresher {
   private _appliedStyles: boolean = false;
   private _didStart: boolean;
-  private _lastStart: number = 0;
   private _lastCheck: number = 0;
   private _isEnabled: boolean = true;
-  private _mDown: Function;
-  private _mMove: Function;
-  private _mUp: Function;
-  private _tStart: Function;
-  private _tMove: Function;
-  private _tEnd: Function;
+  private _events: UIEventManager = new UIEventManager(false);
+  private _pointerEvents: PointerEvents;
+  private _top: string = '';
 
   /**
    * The current state which the refresher is in. The refresher's states include:
@@ -155,7 +152,7 @@ export class Refresher {
    * will automatically go into the `refreshing` state. By default, the pull
    * maximum will be the result of `pullMin + 60`.
    */
-  @Input() pullMax: number = null;
+  @Input() pullMax: number = this.pullMin + 60;
 
   /**
    * @input {number} How many milliseconds it takes to close the refresher. Default is `280`.
@@ -186,67 +183,56 @@ export class Refresher {
    * updated to `refreshing`. From within your refresh handler, you must call the
    * `complete()` method when your async operation has completed.
    */
-  @Output() ionRefresh: EventEmitter<Refresher> = new EventEmitter();
+  @Output() ionRefresh: EventEmitter<Refresher> = new EventEmitter<Refresher>();
 
   /**
    * @output {event} While the user is pulling down the content and exposing the refresher.
    */
-  @Output() ionPull: EventEmitter<Refresher> = new EventEmitter();
+  @Output() ionPull: EventEmitter<Refresher> = new EventEmitter<Refresher>();
 
   /**
    * @output {event} When the user begins to start pulling down.
    */
-  @Output() ionStart: EventEmitter<Refresher> = new EventEmitter();
+  @Output() ionStart: EventEmitter<Refresher> = new EventEmitter<Refresher>();
 
 
-  constructor(
-    @Host() private _content: Content,
-    private _zone: NgZone,
-    elementRef: ElementRef
-  ) {
+  constructor(@Host() private _content: Content, private _zone: NgZone) {
     _content.addCssClass('has-refresher');
-
-    // deprecated warning
-    let ele = elementRef.nativeElement;
-    let deprecatedAttrs = ['pullingIcon', 'pullingText', 'refreshingIcon', 'refreshingText', 'spinner'];
-    deprecatedAttrs.forEach(attrName => {
-      if (ele.hasAttribute(attrName)) {
-        console.warn('<ion-refresher> property "' + attrName + '" should now be placed on the inner <ion-refresher-content> component instead of <ion-refresher>. Please review the Refresher docs for API updates.');
-      }
-    });
-    if (!ele.children.length) {
-      console.warn('<ion-refresher> should now have an inner <ion-refresher-content> component. Please review the Refresher docs for API updates.');
-    }
   }
 
   private _onStart(ev: TouchEvent): any {
     // if multitouch then get out immediately
     if (ev.touches && ev.touches.length > 1) {
-      return 1;
+      return false;
+    }
+    if (this.state !== STATE_INACTIVE) {
+      return false;
+    }
+
+    let scrollHostScrollTop = this._content.getContentDimensions().scrollTop;
+    // if the scrollTop is greater than zero then it's
+    // not possible to pull the content down yet
+    if (scrollHostScrollTop > 0) {
+      return false;
     }
 
     let coord = pointerCoord(ev);
     console.debug('Pull-to-refresh, onStart', ev.type, 'y:', coord.y);
 
-    let now = Date.now();
-    if (this._lastStart + 100 > now) {
-      return 2;
-    }
-    this._lastStart = now;
-
-    if ( ev.type === 'mousedown' && !this._mMove) {
-      this._mMove = this._content.addMouseMoveListener( this._onMove.bind(this) );
+    if (this._content.adjustedTop > 0) {
+      let newTop = this._content.adjustedTop + 'px';
+      if (this._top !== newTop) {
+        this._top = newTop;
+      }
     }
 
     this.startY = this.currentY = coord.y;
     this.progress = 0;
-
-    if (!this.pullMax) {
-      this.pullMax = (this.pullMin + 60);
-    }
+    this.state = STATE_PULLING;
+    return true;
   }
 
-  private _onMove(ev: TouchEvent): any {
+  private _onMove(ev: TouchEvent) {
     // this method can get called like a bazillion times per second,
     // so it's built to be as efficient as possible, and does its
     // best to do any DOM read/writes only when absolutely necessary
@@ -396,12 +382,6 @@ export class Refresher {
 
     // reset on any touchend/mouseup
     this.startY = null;
-    if (this._mMove) {
-      // we don't want to always listen to mousemoves
-      // remove it if we're still listening
-      this._mMove();
-      this._mMove = null;
-    }
   }
 
   private _beginRefresh() {
@@ -463,10 +443,8 @@ export class Refresher {
     this.state = state;
     this._setCss(0, '', true, delay);
 
-    if (this._mMove) {
-      // always remove the mousemove event
-      this._mMove();
-      this._mMove = null;
+    if (this._pointerEvents) {
+      this._pointerEvents.stop();
     }
   }
 
@@ -481,43 +459,13 @@ export class Refresher {
   }
 
   private _setListeners(shouldListen: boolean) {
-    const self = this;
-    const content = self._content;
-
+    this._events.unlistenAll();
+    this._pointerEvents = null;
     if (shouldListen) {
-      // add listener outside of zone
-      // touch handlers
-      self._zone.runOutsideAngular(function() {
-        if (!self._tStart) {
-          self._tStart = content.addTouchStartListener( self._onStart.bind(self) );
-        }
-        if (!self._tMove) {
-          self._tMove = content.addTouchMoveListener( self._onMove.bind(self) );
-        }
-        if (!self._tEnd) {
-          self._tEnd = content.addTouchEndListener( self._onEnd.bind(self) );
-        }
-
-        // mouse handlers
-        // mousemove does not get added until mousedown fires
-        if (!self._mDown) {
-          self._mDown = content.addMouseDownListener( self._onStart.bind(self) );
-        }
-        if (!self._mUp) {
-          self._mUp = content.addMouseUpListener( self._onEnd.bind(self) );
-        }
-      });
-
-    } else {
-      // unregister event listeners from content element
-      self._mDown && self._mDown();
-      self._mMove && self._mMove();
-      self._mUp && self._mUp();
-      self._tStart && self._tStart();
-      self._tMove && self._tMove();
-      self._tEnd && self._tEnd();
-
-      self._mDown = self._mMove = self._mUp = self._tStart = self._tMove = self._tEnd = null;
+      this._pointerEvents = this._events.pointerEvents(this._content.getScrollElement(),
+        this._onStart.bind(this),
+        this._onMove.bind(this),
+        this._onEnd.bind(this));
     }
   }
 

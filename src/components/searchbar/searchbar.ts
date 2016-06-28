@@ -61,7 +61,7 @@ export class Searchbar {
   @Input() cancelButtonText: string = 'Cancel';
 
   /**
-   * @input {boolean} Whether to hide the cancel button or not. Default: `"false"`.
+   * @input {boolean} Whether to show the cancel button or not. Default: `"false"`.
    */
   @Input() showCancelButton: any = false;
 
@@ -104,27 +104,27 @@ export class Searchbar {
   /**
    * @output {event} When the Searchbar input has changed including cleared.
    */
-  @Output() ionInput: EventEmitter<UIEvent> = new EventEmitter();
+  @Output() ionInput: EventEmitter<UIEvent> = new EventEmitter<UIEvent>();
 
   /**
    * @output {event} When the Searchbar input has blurred.
    */
-  @Output() ionBlur: EventEmitter<UIEvent> = new EventEmitter();
+  @Output() ionBlur: EventEmitter<UIEvent> = new EventEmitter<UIEvent>();
 
   /**
    * @output {event} When the Searchbar input has focused.
    */
-  @Output() ionFocus: EventEmitter<UIEvent> = new EventEmitter();
+  @Output() ionFocus: EventEmitter<UIEvent> = new EventEmitter<UIEvent>();
 
   /**
    * @output {event} When the cancel button is clicked.
    */
-  @Output() ionCancel: EventEmitter<UIEvent> = new EventEmitter();
+  @Output() ionCancel: EventEmitter<UIEvent> = new EventEmitter<UIEvent>();
 
   /**
    * @output {event} When the clear input button is clicked.
    */
-  @Output() ionClear: EventEmitter<UIEvent> = new EventEmitter();
+  @Output() ionClear: EventEmitter<UIEvent> = new EventEmitter<UIEvent>();
 
   /**
    * @private

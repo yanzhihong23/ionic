@@ -1,11 +1,16 @@
-ion-tabs[no-navbar] {
-  position: relative;
-  top: auto;
-  height: auto;
+ion-tabs:first-child {
+  margin-top: 60px;
+}
+
+ion-tabs {
   margin-bottom: 20px;
 }
 
-ion-tabs[no-navbar] > ion-navbar-section,
-ion-tabs[no-navbar] > ion-content-section {
-  display: none !important;
+ion-tabs,
+ion-tabs ion-tabbar {
+  position: relative;
+  top: auto;
+  height: auto;
+  visibility: visible;
+  opacity: 1;
 }

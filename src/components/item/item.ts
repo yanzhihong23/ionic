@@ -1,11 +1,11 @@
-import {Component, ContentChildren, forwardRef, Input, ViewChild, ContentChild, Renderer, ElementRef, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
-import {NgIf} from '@angular/common';
+import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, Directive, ElementRef, forwardRef, Input, Renderer, ViewChild, ViewEncapsulation } from '@angular/core';
+import { NgIf } from '@angular/common';
 
-import {Button} from '../button/button';
-import {Form} from '../../util/form';
-import {Icon} from '../icon/icon';
-import {Label} from '../label/label';
-import {ItemReorder} from './item-reorder';
+import { Button } from '../button/button';
+import { Form } from '../../util/form';
+import { Icon } from '../icon/icon';
+import { ItemReorder } from '../item/item-reorder';
+import { Label } from '../label/label';
 
 
 /**
@@ -18,16 +18,34 @@ import {ItemReorder} from './item-reorder';
  *
  *
  * ## Common Usage
- * An item can be written as an `<ion-item>` element or it can be added to any element by adding
- * `ion-item` as an attribute.
+ * There are a few elements that are considered items, but not all of them are styled to look the same.
+ * The basic item can be written as an `<ion-item>` element or it can be added to any element by adding
+ * `ion-item` as an attribute. List headers and item dividers, although styled differently, are also items
+ * and can be written as `<ion-list-header>` and `<ion-item-divider>`, respectively.
  *
  * ### As an Element
- * An item should be written as a `<ion-item>` element when it is not clickable.
+ * A basic item should be written as a `<ion-item>` element when it is not clickable.
  *
  * ```html
  * <ion-item>
  *   Item
  * </ion-item>
+ * ```
+ *
+ * A list header should be written as `<ion-list-header>`.
+ *
+ * ```html
+ * <ion-list-header>
+ *   List Header
+ * </ion-list-header>
+ * ```
+ *
+ * An item divider should be written as `<ion-item-divider>`.
+ *
+ * ```html
+ * <ion-item-divider>
+ *   Item Divider
+ * </ion-item-divider>
  * ```
  *
  * ### As an Attribute
@@ -44,6 +62,9 @@ import {ItemReorder} from './item-reorder';
  *   Anchor Item
  * </a>
  * ```
+ *
+ * Note: do not add `ion-item` as an attribute to an `<ion-list-header>` or `<ion-item-divider>` element
+ * as they are already items and their styling will be changed to look like a basic item.
  *
  * ## Detail Arrows
  * By default, `<button>` and `<a>` elements with the `ion-item` attribute will display a right arrow icon
@@ -108,6 +129,10 @@ import {ItemReorder} from './item-reorder';
  * ```html
  * <ion-list>
  *
+ *   <ion-list-header>
+ *     Header
+ *   </ion-list-header>
+ *
  *   <ion-item>
  *     Item
  *   </ion-item>
@@ -119,6 +144,10 @@ import {ItemReorder} from './item-reorder';
  *   <button ion-item (click)="buttonClick()">
  *     Button Item
  *   </button>
+ *
+ *   <ion-item-divider>
+ *     Item Divider
+ *   </ion-item-divider>
  *
  *   <button ion-item detail-none (click)="buttonClick()">
  *     Button Item with no Detail Arrow
@@ -145,6 +174,13 @@ import {ItemReorder} from './item-reorder';
  *
  * ```html
  * <ion-list>
+ *
+ *   <!-- List header with buttons on each side -->
+ *   <ion-list-header>
+ *     <button item-left (click)="buttonClick()">Button</button>
+ *     List Header
+ *     <button outline item-right (click)="buttonClick()">Outline</button>
+ *   </ion-list-header>
  *
  *   <!-- Loops through and creates multiple items -->
  *   <ion-item *ngFor="let item of items">
@@ -173,6 +209,12 @@ import {ItemReorder} from './item-reorder';
  *     Item
  *     <button outline item-right (click)="buttonClick()">Outline</button>
  *   </ion-item>
+ *
+ *   <!-- Item divider with a right button -->
+ *   <ion-item-divider>
+ *     Item Divider
+ *     <button item-right>Button</button>
+ *   </ion-item-divider>
  *
  *   <!-- Disabled button item with left and right buttons -->
  *   <button ion-item disabled>
@@ -225,7 +267,7 @@ import {ItemReorder} from './item-reorder';
  * @see {@link ../ItemSliding ItemSliding API Docs}
  */
 @Component({
-  selector: 'ion-item,[ion-item]',
+  selector: 'ion-list-header,ion-item,[ion-item],ion-item-divider',
   template:
     '<ng-content select="[item-left],ion-checkbox:not([item-right])"></ng-content>' +
     '<div class="item-inner">' +
@@ -240,6 +282,7 @@ import {ItemReorder} from './item-reorder';
       '<ion-reorder></ion-reorder>' +
     '</div>' +
     '<ion-button-effect></ion-button-effect>',
+<<<<<<< HEAD
   host: {
     'class': 'item'
   },
@@ -247,6 +290,9 @@ import {ItemReorder} from './item-reorder';
     forwardRef(() => ItemReorder),
     NgIf
   ],
+=======
+  directives: [forwardRef(() => ItemReorder)],
+>>>>>>> master
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
@@ -259,11 +305,14 @@ export class Item {
   /**
    * @private
    */
+<<<<<<< HEAD
   @Input() index: number;
 
   /**
    * @private
    */
+=======
+>>>>>>> master
   id: string;
 
   /**
@@ -273,7 +322,6 @@ export class Item {
 
   constructor(form: Form, private _renderer: Renderer, private _elementRef: ElementRef) {
     this.id = form.nextId().toString();
-    _elementRef.nativeElement['$ionComponent'] = this;
   }
 
   /**
@@ -296,20 +344,6 @@ export class Item {
     if (this._inputs.length > 1) {
       this.setCssClass('item-multiple-inputs', true);
     }
-  }
-
-  /**
-   * @private
-   */
-  setCssClass(cssClass: string, shouldAdd: boolean) {
-    this._renderer.setElementClass(this._elementRef.nativeElement, cssClass, shouldAdd);
-  }
-
-  /**
-   * @private
-   */
-  setCssStyle(property: string, value: string) {
-    this._renderer.setElementStyle(this._elementRef.nativeElement, property, value);
   }
 
   /**
@@ -371,7 +405,39 @@ export class Item {
   /**
    * @private
    */
+<<<<<<< HEAD
   height(): number {
     return this._elementRef.nativeElement.offsetHeight;
+=======
+  setCssClass(cssClass: string, shouldAdd: boolean) {
+    this._renderer.setElementClass(this._elementRef.nativeElement, cssClass, shouldAdd);
   }
+
+  /**
+   * @private
+   */
+  setCssStyle(property: string, value: string) {
+    this._renderer.setElementStyle(this._elementRef.nativeElement, property, value);
+  }
+
+  /**
+   * @private
+   */
+  getNativeElement(): HTMLElement {
+    return this._elementRef.nativeElement;
+>>>>>>> master
+  }
+}
+
+/**
+ * @private
+ */
+@Directive({
+  selector: 'ion-item,[ion-item]',
+  host: {
+    'class': 'item'
+  }
+})
+export class ItemContent {
+
 }

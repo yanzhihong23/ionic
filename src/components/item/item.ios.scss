@@ -62,10 +62,13 @@ $item-ios-sliding-content-background:     $list-ios-background-color !default;
   }
 
   p {
+    overflow: inherit;
+
     margin: 0 0 2px;
 
     font-size: 1.2rem;
     line-height: normal;
+    text-overflow: inherit;
     color: $item-ios-paragraph-text-color;
   }
 
@@ -88,7 +91,7 @@ $item-ios-sliding-content-background:     $list-ios-background-color !default;
   transition-duration: 0ms;
 }
 
-.item-inner {
+.item .item-inner {
   padding-right: ($item-ios-padding-right / 2);
 
   border-bottom: 1px solid $list-ios-border-color;
@@ -211,7 +214,7 @@ ion-item-group {
 // --------------------------------------------------
 
 ion-item-divider {
-  padding: $item-ios-padding-top $item-ios-padding-right $item-ios-padding-bottom $item-ios-padding-left;
+  padding-left: $item-ios-padding-left;
 
   color: $item-ios-divider-color;
   background-color: $item-ios-divider-background;

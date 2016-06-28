@@ -1,23 +1,22 @@
-import {bootstrap} from '@angular/platform-browser-dynamic';
-import {enableProdMode, provide, PLATFORM_DIRECTIVES, ComponentRef, NgZone} from '@angular/core';
-import {HTTP_PROVIDERS} from '@angular/http';
+import { bootstrap } from '@angular/platform-browser-dynamic';
+import { ComponentRef, enableProdMode, NgZone, PLATFORM_DIRECTIVES, provide } from '@angular/core';
+import { HTTP_PROVIDERS } from '@angular/http';
 
-import {App} from '../components/app/app';
-import {ClickBlock} from '../util/click-block';
-import {Config} from './config';
-import {Events} from '../util/events';
-import {FeatureDetect} from '../util/feature-detect';
-import {Form} from '../util/form';
-import {IONIC_DIRECTIVES} from './directives';
-import {isPresent} from '../util/util';
-import {Keyboard} from '../util/keyboard';
-import {MenuController} from '../components/menu/menu-controller';
-import {nativeTimeout, closest} from '../util/dom';
-import {NavRegistry} from '../components/nav/nav-registry';
-import {Platform} from '../platform/platform';
-import {ScrollView} from '../util/scroll-view';
-import {TapClick} from '../components/tap-click/tap-click';
-import {Translate} from '../translation/translate';
+import { App } from '../components/app/app';
+import { ClickBlock } from '../util/click-block';
+import { closest, nativeTimeout, nativeRaf } from '../util/dom';
+import { Config } from './config';
+import { Events } from '../util/events';
+import { FeatureDetect } from '../util/feature-detect';
+import { Form } from '../util/form';
+import { IONIC_DIRECTIVES } from './directives';
+import { isPresent } from '../util/util';
+import { Keyboard } from '../util/keyboard';
+import { MenuController } from '../components/menu/menu-controller';
+import { Platform } from '../platform/platform';
+import { ScrollView } from '../util/scroll-view';
+import { TapClick } from '../components/tap-click/tap-click';
+import { Translate } from '../translation/translate';
 const _reflect: any = Reflect;
 
 
@@ -31,8 +30,8 @@ const _reflect: any = Reflect;
  * @usage
  *
  * ```ts
- * import {ionicBootstrap} from 'ionic-angular';
- * import {Component} from '@angular/core';
+ * import { ionicBootstrap } from 'ionic-angular';
+ * import { Component } from '@angular/core';
  *
  * @Component({
  *   templateUrl: 'build/app.html',
@@ -42,25 +41,27 @@ const _reflect: any = Reflect;
  * ionicBootstrap(MyClass, null, {tabbarPlacement: 'bottom'})
  * ```
  */
-export function ionicBootstrap(appRootComponent: any, customProviders?: Array<any>, config?: any): Promise<ComponentRef<any>> {
+export function ionicBootstrap(appRootComponent: any, customProviders?: Array<any>, config?: any) {
   // get all Ionic Providers
   let providers = ionicProviders(customProviders, config);
 
   // automatically set "ion-app" selector to users root component
   addSelector(appRootComponent, 'ion-app');
 
-  // call angular bootstrap
-  return bootstrap(appRootComponent, providers).then(ngComponentRef => {
-    // ionic app has finished bootstrapping
-    return ionicPostBootstrap(ngComponentRef);
+  cssReady(() => {
+    // call angular bootstrap
+    bootstrap(appRootComponent, providers).then(ngComponentRef => {
+      // ionic app has finished bootstrapping
+      ionicPostBootstrap(ngComponentRef);
+    });
   });
 }
 
 
-  /**
-   * @private
-   */
-export function ionicPostBootstrap(ngComponentRef: ComponentRef<any>): ComponentRef<any> {
+/**
+ * @private
+ */
+export function ionicPostBootstrap(ngComponentRef: ComponentRef<any>) {
   let app: App = ngComponentRef.injector.get(App);
   app.setAppInjector(ngComponentRef.injector);
 
@@ -72,21 +73,29 @@ export function ionicPostBootstrap(ngComponentRef: ComponentRef<any>): Component
   // TODO: Use PLATFORM_INITIALIZER
   ngComponentRef.injector.get(TapClick);
 
-  // TODO: Use Renderer
-  ngComponentRef.location.nativeElement.classList.add('app-init');
-
   return ngComponentRef;
 }
 
-  /**
-   * @private
-   */
+let cssLoadAttempt = 0;
+function cssReady(done: Function) {
+  let appEle = <HTMLElement>document.body.querySelector('ion-app');
+
+  if (!appEle || appEle.clientHeight > 0 || cssLoadAttempt > 300) {
+    done();
+
+  } else {
+    nativeRaf(() => {
+      cssLoadAttempt++;
+      cssReady(done);
+    });
+  }
+}
+
+
+/**
+ * @private
+ */
 export function ionicProviders(customProviders?: Array<any>, config?: any): any[] {
-  let directives = IONIC_DIRECTIVES;
-
-  // add custom providers to Ionic's app
-  customProviders = isPresent(customProviders) ? customProviders : [];
-
   // create an instance of Config
   if (!(config instanceof Config)) {
     config = new Config(config);
@@ -110,12 +119,11 @@ export function ionicProviders(customProviders?: Array<any>, config?: any): any[
   let clickBlock = new ClickBlock();
   let events = new Events();
   let featureDetect = new FeatureDetect();
-  let navRegistry = new NavRegistry();
 
   setupDom(window, document, config, platform, clickBlock, featureDetect);
   bindEvents(window, document, platform, events);
 
-  return [
+  let providers: any[] = [
     App,
     provide(ClickBlock, {useValue: clickBlock}),
     provide(Config, {useValue: config}),
@@ -124,14 +132,18 @@ export function ionicProviders(customProviders?: Array<any>, config?: any): any[
     Form,
     Keyboard,
     MenuController,
-    provide(NavRegistry, {useValue: navRegistry}),
     provide(Platform, {useValue: platform}),
     Translate,
     TapClick,
-    provide(PLATFORM_DIRECTIVES, {useValue: [directives], multi: true}),
-    HTTP_PROVIDERS,
-    customProviders
+    provide(PLATFORM_DIRECTIVES, {useValue: IONIC_DIRECTIVES, multi: true}),
+    HTTP_PROVIDERS
   ];
+
+  if (isPresent(customProviders)) {
+    providers.push(customProviders);
+  }
+
+  return providers;
 }
 
 
@@ -147,10 +159,6 @@ function setupDom(window: Window, document: Document, config: Config, platform: 
     linkEle.removeAttribute(modeLinkAttr);
     linkEle.href = href;
   }
-
-  let headStyle = document.createElement('style');
-  headStyle.innerHTML = 'ion-app{display:none}';
-  document.head.appendChild(headStyle);
 
   // set the mode class name
   // ios/md/wp
@@ -179,11 +187,11 @@ function setupDom(window: Window, document: Document, config: Config, platform: 
 
   // touch devices should not use :hover CSS pseudo
   // enable :hover CSS when the "hoverCSS" setting is not false
-  if (config.get('hoverCSS') !== false) {
+  if (config.getBoolean('hoverCSS', true) !== false) {
     bodyEle.classList.add('enable-hover');
   }
 
-  if ( config.getBoolean('clickBlock', true) !== false ) {
+  if (config.getBoolean('clickBlock', true) !== false) {
     clickBlock.enable();
   }
 

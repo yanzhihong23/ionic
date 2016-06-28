@@ -1,8 +1,8 @@
-import {Directive, Attribute, ElementRef, Renderer, Input, Output, EventEmitter, HostListener} from '@angular/core';
-import {NgControl} from '@angular/common';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Renderer} from '@angular/core';
+import { NgControl} from '@angular/common';
 
-import {Config} from '../../config/config';
-import {CSS, hasFocus}  from '../../util/dom';
+import { Config} from '../../config/config';
+import { CSS, hasFocus }  from '../../util/dom';
 
 
 /**
@@ -17,8 +17,8 @@ export class NativeInput {
   private _blurring: boolean;
   private _unrefBlur: Function;
 
-  @Output() focusChange: EventEmitter<boolean> = new EventEmitter();
-  @Output() valueChange: EventEmitter<string> = new EventEmitter();
+  @Output() focusChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private _elementRef: ElementRef,
@@ -31,7 +31,7 @@ export class NativeInput {
   }
 
   @HostListener('input', ['$event'])
-  private _change(ev) {
+  private _change(ev: any) {
     this.valueChange.emit(ev.target.value);
   }
 
@@ -41,8 +41,8 @@ export class NativeInput {
 
     self.focusChange.emit(true);
 
-    function docTouchEnd(ev) {
-      var tapped: HTMLElement = ev.target;
+    function docTouchEnd(ev: TouchEvent) {
+      var tapped = <HTMLElement>ev.target;
       if (tapped && self.element()) {
         if (tapped.tagName !== 'INPUT' && tapped.tagName !== 'TEXTAREA' && !tapped.classList.contains('input-cover')) {
           self.element().blur();
@@ -178,7 +178,7 @@ export class NativeInput {
 
 }
 
-function cloneInput(focusedInputEle, addCssClass) {
+function cloneInput(focusedInputEle: any, addCssClass: string) {
   let clonedInputEle = focusedInputEle.cloneNode(true);
   clonedInputEle.classList.add('cloned-input');
   clonedInputEle.classList.add(addCssClass);
@@ -191,7 +191,7 @@ function cloneInput(focusedInputEle, addCssClass) {
   return clonedInputEle;
 }
 
-function removeClone(focusedInputEle, queryCssClass) {
+function removeClone(focusedInputEle: any, queryCssClass: string) {
   let clonedInputEle = focusedInputEle.parentElement.querySelector('.' + queryCssClass);
   if (clonedInputEle) {
     clonedInputEle.parentNode.removeChild(clonedInputEle);
@@ -207,7 +207,7 @@ function removeClone(focusedInputEle, queryCssClass) {
   selector: '[next-input]'
 })
 export class NextInput {
-  @Output() focused: EventEmitter<boolean> = new EventEmitter();
+  @Output() focused: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @HostListener('focus')
   receivedFocus() {

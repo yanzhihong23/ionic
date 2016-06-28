@@ -16,7 +16,7 @@ ion-reorder {
 
   pointer-events: all;
   touch-action: manipulation;
-  
+
   ion-icon {
     pointer-events: none;
   }
@@ -24,7 +24,10 @@ ion-reorder {
 
 .reorder-enabled {
 
-  ion-item {
+  .item,
+  .item-wrapper {
+    transition: transform 300ms;
+
     will-change: transform;
   }
 
@@ -33,16 +36,20 @@ ion-reorder {
   }
 }
 
-ion-item.reorder-active {
+.reorder-active {
+  .item-inner {
+    pointer-events: none;
+  }
+}
+
+
+.item-wrapper.reorder-active,
+.item.reorder-active {
   z-index: 4;
 
   box-shadow: 0 0 10px rgba(0, 0, 0, .5);
   opacity: .8;
   transition: none;
-  
-  pointer-events: none;
 
-  ion-reorder {
-    pointer-events: none;
-  }
+  pointer-events: none;
 }

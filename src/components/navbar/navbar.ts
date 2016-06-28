@@ -1,13 +1,12 @@
-import {Component, Directive, Optional, ElementRef, Renderer, TemplateRef, forwardRef, Inject, ViewContainerRef, Input} from '@angular/core';
+import { Component, Directive, ElementRef, forwardRef, Inject, Input, Optional } from '@angular/core';
 
-import {Ion} from '../ion';
-import {Icon} from '../icon/icon';
-import {ToolbarBase} from '../toolbar/toolbar';
-import {Config} from '../../config/config';
-import {App} from '../app/app';
-import {isTrueProperty} from '../../util/util';
-import {ViewController} from '../nav/view-controller';
-import {NavController} from '../nav/nav-controller';
+import { App } from '../app/app';
+import { Config } from '../../config/config';
+import { Ion } from '../ion';
+import { isTrueProperty } from '../../util/util';
+import { NavController } from '../nav/nav-controller';
+import { ToolbarBase } from '../toolbar/toolbar';
+import { ViewController } from '../nav/view-controller';
 
 
 @Directive({
@@ -62,26 +61,32 @@ export class ToolbarBackground {
 /**
  * @name Navbar
  * @description
- * Navbar is a global level toolbar that gets updated every time a page gets
- * loaded. You can pass the navbar an `ion-title`, any number of buttons, a segment, or a searchbar.
+ * Navbar acts as the navigational toolbar, which also comes with a back
+ * button. A navbar can contain a `ion-title`, any number of buttons,
+ * a segment, or a searchbar. Navbars must be placed within an
+ * `<ion-header>` in order for them to be placed above the content.
  *
  * @usage
  * ```html
- * <ion-navbar *navbar>
- *   <button menuToggle>
- *     <ion-icon name="menu"></ion-icon>
- *   </button>
+ * <ion-header>
  *
- *   <ion-title>
- *     Page Title
- *   </ion-title>
- *
- *   <ion-buttons end>
- *     <button (click)="openModal()">
- *       <ion-icon name="options"></ion-icon>
+ *   <ion-navbar>
+ *     <button menuToggle>
+ *       <ion-icon name="menu"></ion-icon>
  *     </button>
- *   </ion-buttons>
- * </ion-navbar>
+ *
+ *     <ion-title>
+ *       Page Title
+ *     </ion-title>
+ *
+ *     <ion-buttons end>
+ *       <button (click)="openModal()">
+ *         <ion-icon name="options"></ion-icon>
+ *       </button>
+ *     </ion-buttons>
+ *   </ion-navbar>
+ *
+ * </ion-header>
  * ```
  *
  * @demo /docs/v2/demos/navbar/
@@ -137,8 +142,7 @@ export class Navbar extends ToolbarBase {
     private _app: App,
     @Optional() viewCtrl: ViewController,
     elementRef: ElementRef,
-    config: Config,
-    private _renderer: Renderer
+    config: Config
   ) {
     super(elementRef);
 
@@ -222,22 +226,18 @@ export class Navbar extends ToolbarBase {
 
 /**
  * @private
- * Used to find and register headers in a view, and this directive's
- * content will be moved up to the common navbar location, and created
- * using the same context as the view's content area.
 */
 @Directive({
   selector: 'template[navbar]'
 })
 export class NavbarTemplate {
-  constructor(
-    viewContainerRef: ViewContainerRef,
-    templateRef: TemplateRef<Object>,
-    @Optional() viewCtrl: ViewController
-  ) {
-    if (viewCtrl) {
-      viewCtrl.setNavbarTemplateRef(templateRef);
-      viewCtrl.setNavbarViewRef(viewContainerRef);
-    }
+  constructor() {
+    // deprecated warning: added 2016-06-14, beta.10
+    console.warn('ion-navbar no longer requires *navbar attribute. Please restructure header to:\n' +
+                 '<ion-header>\n' +
+                 '  <ion-navbar>\n' +
+                 '    ...\n' +
+                 '  </ion-navbar>\n' +
+                 '</ion-header>');
   }
 }

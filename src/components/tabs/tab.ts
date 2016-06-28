@@ -1,14 +1,14 @@
-import {Component, Inject, forwardRef, ElementRef, NgZone, Renderer, ComponentResolver, ViewContainerRef, ViewChild, Type, ViewEncapsulation, ChangeDetectorRef, EventEmitter, Input, Output} from '@angular/core';
-import {NgIf} from '@angular/common';
+import { ChangeDetectorRef, Component, ComponentResolver, ElementRef, EventEmitter, forwardRef, Input, Inject, NgZone, Output, Renderer, ViewChild, ViewEncapsulation, ViewContainerRef } from '@angular/core';
+import { NgIf } from '@angular/common';
 
-import {App} from '../app/app';
-import {Config} from '../../config/config';
-import {isTrueProperty} from '../../util/util';
-import {Keyboard} from '../../util/keyboard';
-import {NavController, NavOptions} from '../nav/nav-controller';
-import {TabButton} from './tab-button';
-import {Tabs} from './tabs';
-import {ViewController} from '../nav/view-controller';
+import { App } from '../app/app';
+import { Config } from '../../config/config';
+import { isTrueProperty} from '../../util/util';
+import { Keyboard} from '../../util/keyboard';
+import { NavController, NavOptions} from '../nav/nav-controller';
+import { TabButton} from './tab-button';
+import { Tabs} from './tabs';
+import { ViewController} from '../nav/view-controller';
 
 
 /**
@@ -124,7 +124,7 @@ import {ViewController} from '../nav/view-controller';
     '[attr.aria-labelledby]': '_btnId',
     'role': 'tabpanel'
   },
-  template: '<div #viewport></div>',
+  template: '<div #viewport></div><div class="nav-decor"></div>',
   encapsulation: ViewEncapsulation.None,
   directives: [NgIf]
 })
@@ -150,7 +150,7 @@ export class Tab extends NavController {
   /**
    * @input {Page} Set the root page for this tab.
    */
-  @Input() root: Type;
+  @Input() root: any;
 
   /**
    * @input {object} Any nav-params to pass to the root page of this tab.
@@ -204,12 +204,23 @@ export class Tab extends NavController {
   }
 
   /**
+   * @input {boolean} Whether it's possible to swipe-to-go-back on this tab or not.
+   */
+  @Input()
+  get swipeBackEnabled(): boolean {
+    return this._sbEnabled;
+  }
+  set swipeBackEnabled(val: boolean) {
+    this._sbEnabled = isTrueProperty(val);
+  }
+
+  /**
    * @output {Tab} Method to call when the current tab is selected
    */
-  @Output() ionSelect: EventEmitter<Tab> = new EventEmitter();
+  @Output() ionSelect: EventEmitter<Tab> = new EventEmitter<Tab>();
 
   constructor(
-    @Inject(forwardRef(() => Tabs)) parentTabs: Tabs,
+    @Inject(forwardRef(() => Tabs)) public parent: Tabs,
     app: App,
     config: Config,
     keyboard: Keyboard,
@@ -220,9 +231,13 @@ export class Tab extends NavController {
     private _cd: ChangeDetectorRef
   ) {
     // A Tab is a NavController for its child pages
-    super(parentTabs, app, config, keyboard, elementRef, zone, renderer, compiler);
+    super(parent, app, config, keyboard, elementRef, zone, renderer, compiler);
 
-    parentTabs.add(this);
+    parent.add(this);
+
+    if (parent.rootNav) {
+      this._sbEnabled = parent.rootNav.isSwipeBackEnabled();
+    }
 
     this._panelId = 'tabpanel-' + this.id;
     this._btnId = 'tab-' + this.id;
@@ -249,12 +264,12 @@ export class Tab extends NavController {
   load(opts: NavOptions, done?: Function) {
     if (!this._loaded && this.root) {
       this.push(this.root, this.rootParams, opts).then(() => {
-        done();
+        done(true);
       });
       this._loaded = true;
 
     } else {
-      done();
+      done(false);
     }
   }
 
@@ -268,11 +283,7 @@ export class Tab extends NavController {
         console.debug('Tabs, preload', this.id);
         this.load({
           animate: false,
-          preload: true,
-          postLoad: (viewCtrl: ViewController) => {
-            let navbar = viewCtrl.getNavbar();
-            navbar && navbar.setHidden(true);
-          }
+          preload: true
         }, function(){});
       }
     }, wait);
@@ -281,18 +292,14 @@ export class Tab extends NavController {
   /**
    * @private
    */
-  loadPage(viewCtrl: ViewController, navbarContainerRef: any, opts: NavOptions, done: Function) {
-    // by default a page's navbar goes into the shared tab's navbar section
-    navbarContainerRef = this.parent.navbarContainerRef;
-
+  loadPage(viewCtrl: ViewController, viewport: ViewContainerRef, opts: NavOptions, done: Function) {
     let isTabSubPage = (this.parent.subPages && viewCtrl.index > 0);
+
     if (isTabSubPage) {
-      // a subpage, that's not the first index
-      // should not use the shared tabs navbar section, but use it's own
-      navbarContainerRef = null;
+      viewport = this.parent.portal;
     }
 
-    super.loadPage(viewCtrl, navbarContainerRef, opts, () => {
+    super.loadPage(viewCtrl, viewport, opts, () => {
       if (isTabSubPage) {
         // add the .tab-subpage css class to tabs pages that should act like subpages
         let pageEleRef = viewCtrl.pageRef();
@@ -318,18 +325,6 @@ export class Tab extends NavController {
       // this tab is not selected, do not detect changes
       this._cd.detach();
     }
-
-    this.hideNavbars(!isSelected);
-  }
-
-  /**
-   * @private
-   */
-  hideNavbars(shouldHideNavbars: boolean) {
-    this._views.forEach(viewCtrl => {
-      let navbar = viewCtrl.getNavbar();
-      navbar && navbar.setHidden(shouldHideNavbars);
-    });
   }
 
   /**

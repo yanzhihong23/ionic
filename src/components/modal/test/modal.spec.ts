@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
-import {Modal, ModalCmp, NavController, ViewController} from '../../../../src';
+import {Modal, NavController, ViewController} from '../../../../src';
+import {ModalCmp} from '../../../../src/components/modal/modal';
 
 export function run() {
   describe('Modal', () => {
@@ -8,9 +9,7 @@ export function run() {
 
       it('should have the correct properties on modal view controller instance', () => {
         let modalViewController = Modal.create(ComponentToPresent);
-        expect(modalViewController.modalViewType).toEqual("ComponentToPresent");
         expect(modalViewController.componentType).toEqual(ModalCmp);
-        expect(modalViewController.viewType).toEqual("modal");
         expect(modalViewController.isOverlay).toEqual(true);
         expect(modalViewController instanceof ViewController).toEqual(true);
       });
