@@ -267,10 +267,15 @@ gulp.task('bundle.es6', function() {
     ])
     .pipe(gulp.dest('dist/esm/components/slides'));
 
-  return tsCompile(getTscOptions('es6'), 'bundle.es6')
-    .pipe(babel({
-      presets: ['es2015-native-modules']
-    }))
+  var es6options = {
+    emitDecoratorMetadata: true,
+    experimentalDecorators: true,
+    target: "es5",
+    module: "es2015",
+    isolatedModules: true,
+    typescript: require('typescript')
+  }
+  return tsCompile(es6options, 'bundle.es6')
     .pipe(gulp.dest('dist/esm'));
 });
 
@@ -954,7 +959,7 @@ gulp.task('build.release', function(done){
   runSequence(
     'clean',
     'copy.libs',
-    ['bundle', 'bundle.es6', 'sass', 'fonts', 'copy.scss'],
+    ['bundle', 'sass', 'fonts', 'copy.scss'],
     done
   );
 });
