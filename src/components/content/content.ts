@@ -72,7 +72,7 @@ export class Content extends Ion {
   private _inputPolling: boolean = false;
   private _scroll: ScrollView;
   private _scLsn: Function;
-  private _sbPadding: boolean;
+  _sbPadding: boolean;
   private _fullscreen: boolean;
   private _scrollEle: HTMLElement;
   private _footerEle: HTMLElement;
