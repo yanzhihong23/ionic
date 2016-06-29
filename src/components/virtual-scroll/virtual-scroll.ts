@@ -298,7 +298,7 @@ export class VirtualScroll implements DoCheck, AfterContentInit, OnDestroy {
   /**
    * @input {function} Same as `ngForTrackBy` which can be used on `ngFor`.
    */
-  @Input() set virtualTrackBy(val: TrackByFn) {
+  @Input() set virtualTrackBy(val: any) {
     this._trackBy = val;
   }
 
