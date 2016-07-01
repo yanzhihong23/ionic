@@ -4,7 +4,7 @@ import { NgIf } from '@angular/common';
 import { Button } from '../button/button';
 import { Form } from '../../util/form';
 import { Icon } from '../icon/icon';
-import { ItemReorder } from '../item/item-reorder';
+import { Reorder } from '../item/item-reorder';
 import { Label } from '../label/label';
 
 
@@ -268,24 +268,22 @@ import { Label } from '../label/label';
  */
 @Component({
   selector: 'ion-list-header,ion-item,[ion-item],ion-item-divider',
-  template:
-    '<ng-content select="[item-left],ion-checkbox:not([item-right])"></ng-content>' +
-    '<div class="item-inner">' +
-      '<div class="input-wrapper">' +
-        '<ng-content select="ion-label"></ng-content>' +
-        '<ion-label *ngIf="_viewLabel">' +
-          '<ng-content></ng-content>' +
-        '</ion-label>' +
-        '<ng-content select="ion-select,ion-input,ion-textarea,ion-datetime,ion-range,[item-content]"></ng-content>' +
-      '</div>' +
-      '<ng-content select="[item-right],ion-radio,ion-toggle"></ng-content>' +
-      '<ion-reorder></ion-reorder>' +
-    '</div>' +
-    '<ion-button-effect></ion-button-effect>',
-  directives: [
-    forwardRef(() => ItemReorder),
-    NgIf
-  ],
+  template: `
+    <ng-content select="[item-left],ion-checkbox:not([item-right])"></ng-content>
+    <div class="item-inner">
+      <div class="input-wrapper">
+        <ng-content select="ion-label"></ng-content>
+        <ion-label *ngIf="_viewLabel">
+          <ng-content></ng-content>
+        </ion-label>
+        <ng-content select="ion-select,ion-input,ion-textarea,ion-datetime,ion-range,[item-content]"></ng-content>
+      </div>
+      <ng-content select="[item-right],ion-radio,ion-toggle"></ng-content>
+      <ion-reorder></ion-reorder>
+    </div>
+    <ion-button-effect></ion-button-effect>
+  `,
+  directives: [NgIf, Label, forwardRef(() => Reorder)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })

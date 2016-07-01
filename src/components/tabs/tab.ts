@@ -5,7 +5,9 @@ import { App } from '../app/app';
 import { Config } from '../../config/config';
 import { isTrueProperty} from '../../util/util';
 import { Keyboard} from '../../util/keyboard';
-import { NavController, NavOptions} from '../nav/nav-controller';
+import { MenuController } from '../menu/menu-controller';
+import { NavController} from '../nav/nav-controller';
+import { NavOptions} from '../nav/nav-options';
 import { TabButton} from './tab-button';
 import { Tabs} from './tabs';
 import { ViewController} from '../nav/view-controller';
@@ -98,13 +100,13 @@ import { ViewController} from '../nav/view-controller';
  *
  * ```ts
  * export class Tabs {
- *   constructor(nav: NavController) {
- *     this.nav = nav;
+ *   constructor(private modalCtrl: ModalController) {
+ *
  *   }
  *
  *   chat() {
- *     let modal = Modal.create(ChatPage);
- *     this.nav.present(modal);
+ *     let modal = this.modalCtrl.create(ChatPage);
+ *     modal.present();
  *   }
  * }
  * ```
@@ -228,10 +230,11 @@ export class Tab extends NavController {
     zone: NgZone,
     renderer: Renderer,
     compiler: ComponentResolver,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    menuCtrl: MenuController
   ) {
     // A Tab is a NavController for its child pages
-    super(parent, app, config, keyboard, elementRef, zone, renderer, compiler);
+    super(parent, app, config, keyboard, elementRef, zone, renderer, compiler, menuCtrl);
 
     parent.add(this);
 

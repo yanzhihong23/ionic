@@ -1,11 +1,17 @@
-import {Injectable, Injector} from '@angular/core';
-import {Title} from '@angular/platform-browser';
+import { Component, ComponentResolver, EventEmitter, Injectable, Renderer, ViewChild, ViewContainerRef } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
-import {ClickBlock} from '../../util/click-block';
-import {Config} from '../../config/config';
-import {NavController} from '../nav/nav-controller';
-import {Platform} from '../../platform/platform';
-import {Tabs} from '../tabs/tabs';
+import { ClickBlock } from '../../util/click-block';
+import { Config } from '../../config/config';
+import { NavController } from '../nav/nav-controller';
+import { NavOptions } from '../nav/nav-options';
+import { NavPortal } from '../nav/nav-portal';
+import { Platform } from '../../platform/platform';
+
+/**
+ * @private
+ */
+export abstract class UserComponent {}
 
 
 /**
@@ -18,11 +24,23 @@ export class App {
   private _title: string = '';
   private _titleSrv: Title = new Title();
   private _rootNav: NavController = null;
-  private _appInjector: Injector;
+  private _portal: NavPortal;
+
+  /**
+   * @private
+   */
+  clickBlock: ClickBlock;
+
+  viewDidLoad: EventEmitter<any> = new EventEmitter();
+  viewWillEnter: EventEmitter<any> = new EventEmitter();
+  viewDidEnter: EventEmitter<any> = new EventEmitter();
+  viewWillLeave: EventEmitter<any> = new EventEmitter();
+  viewDidLeave: EventEmitter<any> = new EventEmitter();
+  viewWillUnload: EventEmitter<any> = new EventEmitter();
+  viewDidUnload: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private _config: Config,
-    private _clickBlock: ClickBlock,
     private _platform: Platform
   ) {
     // listen for hardware back button events
@@ -55,14 +73,15 @@ export class App {
    */
   setEnabled(isEnabled: boolean, duration: number = 700) {
     this._disTime = (isEnabled ? 0 : Date.now() + duration);
-    const CLICK_BLOCK_BUFFER_IN_MILLIS = 64;
-    if (this._clickBlock) {
-      if ( isEnabled || duration <= 32 ) {
+
+    if (this.clickBlock) {
+      if (isEnabled || duration <= 32) {
         // disable the click block if it's enabled, or the duration is tiny
-        this._clickBlock.show(false, 0);
+        this.clickBlock.activate(false, 0);
+
       } else {
         // show the click block for duration + some number
-        this._clickBlock.show(true, duration + CLICK_BLOCK_BUFFER_IN_MILLIS);
+        this.clickBlock.activate(true, duration + CLICK_BLOCK_BUFFER_IN_MILLIS);
       }
     }
   }
@@ -88,7 +107,7 @@ export class App {
    * @return {boolean}
    */
   isScrolling(): boolean {
-    return (this._scrollTime + 64 > Date.now());
+    return (this._scrollTime + 48 > Date.now());
   }
 
   /**
@@ -121,6 +140,36 @@ export class App {
    */
   setRootNav(nav: any) {
     this._rootNav = nav;
+  }
+
+  /**
+   * @private
+   */
+  setPortal(portal: NavPortal) {
+    this._portal = portal;
+  }
+
+  /**
+   * @private
+   */
+  present(enteringView: any, opts: NavOptions = {}): Promise<any> {
+    enteringView.setNav(this._portal);
+
+    opts.keyboardClose = false;
+    opts.direction = 'forward';
+
+    if (!opts.animation) {
+      opts.animation = enteringView.getTransitionName('forward');
+    }
+
+    enteringView.setLeavingOpts({
+      keyboardClose: false,
+      direction: 'back',
+      animation: enteringView.getTransitionName('back'),
+      ev: opts.ev
+    });
+
+    return this._portal.insertViews(-1, [enteringView], opts);
   }
 
   /**
@@ -162,12 +211,11 @@ export class App {
 
       // first check if the root navigation has any overlays
       // opened in it's portal, like alert/actionsheet/popup
-      let portal = this._rootNav.getPortal && this._rootNav.getPortal();
-      if (portal && portal.length() > 0) {
+      if (this._portal && this._portal.length() > 0) {
         // there is an overlay view in the portal
         // let's pop this one off to go back
         console.debug('app, goBack pop overlay');
-        return portal.pop();
+        return this._portal.pop();
       }
 
       // next get the active nav, check itself and climb up all
@@ -192,7 +240,7 @@ export class App {
   /**
    * @private
    */
-  getRegisteredComponent(cls: any): any {
+  private getRegisteredComponent(cls: any): any {
     // deprecated warning: added 2016-04-28, beta7
     console.warn('Using app.getRegisteredComponent() to query components has been deprecated. ' +
                  'Please use Angular\'s ViewChild annotation instead:\n\nhttp://learnangular2.com/viewChild/');
@@ -201,25 +249,54 @@ export class App {
   /**
    * @private
    */
-  getComponent(id: string): any {
+  private getComponent(id: string): any {
     // deprecated warning: added 2016-04-28, beta7
     console.warn('Using app.getComponent() to query components has been deprecated. ' +
                  'Please use Angular\'s ViewChild annotation instead:\n\nhttp://learnangular2.com/viewChild/');
   }
 
   /**
-   * Set the global app injector that contains references to all of the instantiated providers
-   * @param injector
-   */
-  setAppInjector(injector: Injector) {
-    this._appInjector = injector;
-  }
-
-  /**
    * Get an instance of the global app injector that contains references to all of the instantiated providers
    * @returns {Injector}
    */
-  getAppInjector(): Injector {
-    return this._appInjector;
+  private getAppInjector(): any {
+    // deprecated warning: added 2016-06-27, beta10
+    console.warn('Recent Angular2 versions should no longer require App.getAppInjector()');
   }
 }
+
+
+/**
+ * @private
+ */
+@Component({
+  selector: 'ion-app',
+  template: `
+    <div #anchor nav-portal></div>
+    <click-block></click-block>
+  `,
+  directives: [NavPortal, ClickBlock]
+})
+export class AppRoot {
+
+  @ViewChild('anchor', {read: ViewContainerRef}) private _viewport: ViewContainerRef;
+
+  constructor(
+      private _cmp: UserComponent,
+      private _cr: ComponentResolver,
+      private _renderer: Renderer) {}
+
+  ngAfterViewInit() {
+    // load the user app's root component
+    this._cr.resolveComponent(<any>this._cmp).then(componentFactory => {
+      let appEle: HTMLElement = this._renderer.createElement(null, componentFactory.selector || 'div', null);
+      appEle.setAttribute('class', 'app-root');
+
+      let componentRef = componentFactory.create(this._viewport.injector, null, appEle);
+      this._viewport.insert(componentRef.hostView, 0);
+    });
+  }
+
+}
+
+const CLICK_BLOCK_BUFFER_IN_MILLIS = 64;

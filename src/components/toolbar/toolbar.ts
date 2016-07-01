@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, Directive, ElementRef, forwardRef, Inject, Optional, QueryList, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, Directive, ElementRef, Optional, QueryList, ViewEncapsulation } from '@angular/core';
 
 import { Config } from '../../config/config';
 import { Ion } from '../ion';
@@ -190,14 +190,15 @@ export class ToolbarBase extends Ion {
  */
 @Component({
   selector: 'ion-toolbar',
-  template:
-    '<div class="toolbar-background"></div>' +
-    '<ng-content select="[menuToggle],ion-buttons[left]"></ng-content>' +
-    '<ng-content select="ion-buttons[start]"></ng-content>' +
-    '<ng-content select="ion-buttons[end],ion-buttons[right]"></ng-content>' +
-    '<div class="toolbar-content">' +
-      '<ng-content></ng-content>' +
-    '</div>',
+  template: `
+    <div class="toolbar-background"></div>
+    <ng-content select="[menuToggle],ion-buttons[left]"></ng-content>
+    <ng-content select="ion-buttons[start]"></ng-content>
+    <ng-content select="ion-buttons[end],ion-buttons[right]"></ng-content>
+    <div class="toolbar-content">
+      <ng-content></ng-content>
+    </div>
+  `,
   host: {
     'class': 'toolbar',
     '[class.statusbar-padding]': '_sbPadding'

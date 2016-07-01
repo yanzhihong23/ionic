@@ -4,8 +4,8 @@ import { App } from '../app/app';
 import { Config } from '../../config/config';
 import { Keyboard } from '../../util/keyboard';
 import { isTrueProperty } from '../../util/util';
+import { MenuController } from '../menu/menu-controller';
 import { NavController } from './nav-controller';
-import { NavPortal } from './nav-portal';
 import { ViewController } from './view-controller';
 
 /**
@@ -108,8 +108,10 @@ import { ViewController } from './view-controller';
  */
 @Component({
   selector: 'ion-nav',
-  template: '<div #viewport nav-viewport></div><div class="nav-decor"></div><div nav-portal></div>',
-  directives: [NavPortal],
+  template: `
+    <div #viewport nav-viewport></div>
+    <div class="nav-decor"></div>
+  `,
   encapsulation: ViewEncapsulation.None,
 })
 export class Nav extends NavController implements AfterViewInit {
@@ -125,9 +127,10 @@ export class Nav extends NavController implements AfterViewInit {
     elementRef: ElementRef,
     zone: NgZone,
     renderer: Renderer,
-    compiler: ComponentResolver
+    compiler: ComponentResolver,
+    menuCtrl: MenuController
   ) {
-    super(parent, app, config, keyboard, elementRef, zone, renderer, compiler);
+    super(parent, app, config, keyboard, elementRef, zone, renderer, compiler, menuCtrl);
 
     if (viewCtrl) {
       // an ion-nav can also act as an ion-page within a parent ion-nav
@@ -194,11 +197,4 @@ export class Nav extends NavController implements AfterViewInit {
     this._sbEnabled = isTrueProperty(val);
   }
 
-  @ViewChildren(NavPortal)
-  get _np(): QueryList<NavPortal> {
-    return null;
-  }
-  set _np(val: QueryList<NavPortal>) {
-    this.setPortal(val.first);
-  }
 }

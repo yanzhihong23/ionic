@@ -8,10 +8,11 @@ import { isBlank, pascalCaseToDashCase } from '../../util/util';
 import { Keyboard } from '../../util/keyboard';
 import { MenuController } from '../menu/menu-controller';
 import { NavParams } from './nav-params';
-import { NavPortal } from './nav-portal';
+import { NavOptions } from './nav-options';
 import { SwipeBackGesture } from './swipe-back';
 import { Transition } from '../../transitions/transition';
 import { ViewController } from './view-controller';
+
 
 /**
  * @name NavController
@@ -52,8 +53,8 @@ import { ViewController } from './view-controller';
  *
  * ```ts
  *  class MyComponent {
- *    constructor(nav: NavController) {
- *      this.nav = nav;
+ *    constructor(private nav: NavController) {
+ *
  *    }
  *  }
  * ```
@@ -91,14 +92,14 @@ import { ViewController } from './view-controller';
  * }
  * ```
  *
- *  | Page Event         | Description                                                                                                                                                                                                                                                                       |
- *  |--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ *  | Page Event          | Description                                                                                                                                                                                                                                                                        |
+ *  |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
  *  | `ionViewLoaded`     | Runs when the page has loaded. This event only happens once per page being created and added to the DOM. If a page leaves but is cached, then this event will not fire again on a subsequent viewing. The `ionViewLoaded` event is good place to put your setup code for the page. |
- *  | `ionViewWillEnter`  | Runs when the page is about to enter and become the active page.                                                                                                                                                                                                                  |
- *  | `ionViewDidEnter`   | Runs when the page has fully entered and is now the active page. This event will fire, whether it was the first load or a cached page.                                                                                                                                            |
- *  | `ionViewWillLeave`  | Runs when the page is about to leave and no longer be the active page.                                                                                                                                                                                                            |
- *  | `ionViewDidLeave`   | Runs when the page has finished leaving and is no longer the active page.                                                                                                                                                                                                         |
- *  | `ionViewWillUnload` | Runs when the page is about to be destroyed and have its elements removed.                                                                                                                                                                                                        |
+ *  | `ionViewWillEnter`  | Runs when the page is about to enter and become the active page.                                                                                                                                                                                                                   |
+ *  | `ionViewDidEnter`   | Runs when the page has fully entered and is now the active page. This event will fire, whether it was the first load or a cached page.                                                                                                                                             |
+ *  | `ionViewWillLeave`  | Runs when the page is about to leave and no longer be the active page.                                                                                                                                                                                                             |
+ *  | `ionViewDidLeave`   | Runs when the page has finished leaving and is no longer the active page.                                                                                                                                                                                                          |
+ *  | `ionViewWillUnload` | Runs when the page is about to be destroyed and have its elements removed.                                                                                                                                                                                                         |
  *  | `ionViewDidUnload`  | Runs after the page has been destroyed and its elements have been removed.
  *
  *
@@ -162,7 +163,6 @@ export class NavController extends Ion {
   private _trans: Transition;
   private _sbGesture: SwipeBackGesture;
   private _sbThreshold: number;
-  private _portal: NavPortal;
   private _viewport: ViewContainerRef;
   private _children: any[] = [];
 
@@ -171,12 +171,46 @@ export class NavController extends Ion {
   protected _trnsDelay: any;
   protected _views: ViewController[] = [];
 
+  /**
+   * Observable to be subscribed to when a component is loaded.
+   * @returns {Observable} Returns an observable
+   */
   viewDidLoad: EventEmitter<any>;
+
+  /**
+   * Observable to be subscribed to when a component is about to be loaded.
+   * @returns {Observable} Returns an observable
+   */
   viewWillEnter: EventEmitter<any>;
+
+  /**
+   * Observable to be subscribed to when a component has fully become the active component.
+   * @returns {Observable} Returns an observable
+   */
   viewDidEnter: EventEmitter<any>;
+
+  /**
+   * Observable to be subscribed to when a component is about to leave, and no longer active.
+   * @returns {Observable} Returns an observable
+   */
   viewWillLeave: EventEmitter<any>;
+
+  /**
+   * Observable to be subscribed to when a component has fully left and is no longer active.
+   * @returns {Observable} Returns an observable
+   */
   viewDidLeave: EventEmitter<any>;
+
+  /**
+   * Observable to be subscribed to when a component is about to be unloaded and destroyed.
+   * @returns {Observable} Returns an observable
+   */
   viewWillUnload: EventEmitter<any>;
+
+  /**
+   * Observable to be subscribed to when a component has fully been unloaded and destroyed.
+   * @returns {Observable} Returns an observable
+   */
   viewDidUnload: EventEmitter<any>;
 
   /**
@@ -217,7 +251,8 @@ export class NavController extends Ion {
     elementRef: ElementRef,
     protected _zone: NgZone,
     protected _renderer: Renderer,
-    protected _compiler: ComponentResolver
+    protected _compiler: ComponentResolver,
+    protected _menuCtrl: MenuController
   ) {
     super(elementRef);
 
@@ -243,20 +278,6 @@ export class NavController extends Ion {
   /**
    * @private
    */
-  getPortal(): NavController {
-    return this._portal;
-  }
-
-  /**
-   * @private
-   */
-  setPortal(val: NavPortal) {
-    this._portal = val;
-  }
-
-  /**
-   * @private
-   */
   setViewport(val: ViewContainerRef) {
     this._viewport = val;
   }
@@ -273,77 +294,10 @@ export class NavController extends Ion {
   }
 
   /**
-   * You can set the views of the current navigation stack and navigate to the
-   * last view.
-   *
-   *
-   *```ts
-   * import {NavController } from 'ionic-angular'
-   * import {Detail } from '../detail/detail'
-   * import {Info } from '../info/info'
-   *
-   *  export class Home {
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *    setPages() {
-   *      this.nav.setPages([ {page: List}, {page: Detail}, {page:Info} ]);
-   *    }
-   *  }
-   *```
-   *
-   *
-   * In this example, we're giving the current nav stack an array of pages.
-   * Then the navigation stack will navigate to the last page in the array
-   * and remove the previously active page.
-   *
-   * By default animations are disabled, but they can be enabled by passing
-   * options to the navigation controller.
-   *
-   *
-   * ```ts
-   * import {NavController } from 'ionic-angular'
-   * import {Detail } from '../detail/detail'
-   *
-   *  export class Home {
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *    setPages() {
-   *      this.nav.setPages([ {page: List}, {page: Detail} ], {
-   *        animate: true
-   *      });
-   *    }
-   *  }
-   * ```
-   *
-   * You can also pass any navigation params to the individual pages in
-   * the array.
-   *
-   *
-   * ```ts
-   * import {NavController } from 'ionic-angular';
-   * import {Info } from '../info/info';
-   * import {List } from '../list/list';
-   * import {Detail } from '../detail/detail';
-   *
-   *  export class Home {
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *    setPages() {
-   *      this.nav.setPages([{
-   *        page: Info
-   *      }, {
-   *        page: List,
-   *        params: {tags: 'css'}
-   *      }, {
-   *        page: Detail,
-   *        params: {id: 325}
-   *      }]);
-   *    }
-   *  }
-   *```
+   * Set the views of the current navigation stack and navigate to the
+   * last view. By default animations are disabled, but they can be enabled
+   * by passing options to the navigation controller.You can also pass any
+   * navigation params to the individual pages in the array.
    *
    * @param {array<Page>} pages  An arry of page components and their params to load in the stack.
    * @param {object} [opts={}] Nav options to go with this transition.
@@ -386,66 +340,9 @@ export class NavController extends Ion {
   }
 
   /**
-   * Push is how we can pass components and navigate to them. We push the component
-   * we want to navigate to on to the navigation stack.
+   * Push a new component onto the current navication stack. Pass any aditional information
+   * along as an object. This additional information is acessible through NavParams
    *
-   * ```ts
-   * class MyClass{
-   *    constructor(nav:NavController){
-   *      this.nav = nav;
-   *    }
-   *
-   *    pushPage(){
-   *      this.nav.push(SecondView);
-   *    }
-   * }
-   * ```
-   *
-   * We can also pass along parameters to the next view, such as data that we have
-   * on the current view. This is a similar concept to to V1 apps with `$stateParams`.
-   *
-   * ```ts
-   * class MyClass{
-   *    constructor(nav:NavController){
-   *      this.nav = nav;
-   *    }
-   *
-   *    pushPage(user){
-   *       // user is an object we have in our view
-   *       // typically this comes from an ngFor or some array
-   *       // here we can create an object with a property of
-   *       // paramUser, and set its value to the user object we passed in
-   *      this.nav.push(SecondView, { paramUser: user });
-   *    }
-   * }
-   * ```
-   *
-   * We'll look at how we can access that data in the `SecondView` in the
-   * navParam docs.
-   *
-   * We can also pass any options to the transtion from that same method.
-   *
-   * ```ts
-   * class MyClass{
-   *    constructor(nav: NavController){
-   *      this.nav = nav;
-   *    }
-   *
-   *    pushPage(user){
-   *      this.nav.push(SecondView,{
-   *       // user is an object we have in our view
-   *       // typically this comes from an ngFor or some array
-   *       // here we can create an object with a property of
-   *       // paramUser, and set it's value to the user object we passed in
-   *       paramUser: user
-   *      },{
-   *       // here we can configure things like the animations direction or
-   *       // or if the view should animate at all.
-   *       direction: 'back'
-   *      });
-   *    }
-   * }
-   * ```
    * @param {Page} page  The page component class you want to push on to the navigation stack
    * @param {object} [params={}] Any nav-params you want to pass along to the next view
    * @param {object} [opts={}] Nav options to go with this transition.
@@ -456,86 +353,20 @@ export class NavController extends Ion {
   }
 
   /**
-   * Present is how an app display overlays on top of the content, from within the
-   * root level `NavController`. The `present` method is used by overlays, such
-   * as `ActionSheet`, `Alert`, and `Modal`. The main difference between `push`
-   * and `present` is that `present` takes a `ViewController` instance, whereas
-   * `push` takes a component class which hasn't been instantiated yet.
-   * Additionally, `present` will place the overlay in the root NavController's
-   * stack.
-   *
-   * ```ts
-   * class MyClass{
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *
-   *    presentModal() {
-   *      let modal = Modal.create(ProfilePage);
-   *      this.nav.present(modal);
-   *    }
-   * }
-   * ```
-   *
-   * @param {ViewController} enteringView The component you want to push on the navigation stack.
-   * @param {object} [opts={}] Nav options to go with this transition.
-   * @returns {Promise} Returns a promise which is resolved when the transition has completed.
+   * @private
+   * DEPRECATED: Please use inject the overlays controller and use the present method on the instance instead.
    */
-  present(enteringView: ViewController, opts?: NavOptions): Promise<any> {
-    let rootNav = this.rootNav;
-
-    if (rootNav['_tabs']) {
-      // TODO: must have until this goes in
-      // https://github.com/angular/angular/issues/5481
-      console.error('A parent <ion-nav> is required for ActionSheet/Alert/Modal/Loading');
-      return;
-    }
-
-    if (isBlank(opts)) {
-      opts = {};
-    }
-
-    if (enteringView.usePortal && rootNav._portal) {
-      return rootNav._portal.present(enteringView, opts);
-    }
-
-    enteringView.setNav(rootNav);
-
-    opts.keyboardClose = false;
-    opts.direction = 'forward';
-
-    if (!opts.animation) {
-      opts.animation = enteringView.getTransitionName('forward');
-    }
-
-    enteringView.setLeavingOpts({
-      keyboardClose: false,
-      direction: 'back',
-      animation: enteringView.getTransitionName('back'),
-      ev: opts.ev
-    });
-
-    // present() always uses the root nav
-    // start the transition
-    return rootNav._insertViews(-1, [enteringView], opts);
+  private present(enteringView: ViewController, opts?: NavOptions): Promise<any> {
+    // deprecated warning: added beta.11 2016-06-27
+    console.warn('nav.present() has been deprecated.\n' +
+                 'Please inject the overlay\'s controller and use the present method on the instance instead.');
+    return Promise.resolve();
   }
 
   /**
-   * Inserts a view into the nav stack at the specified index. This is useful if
-   * you need to add a view at any point in your navigation stack.
+   * Inserts a component into the nav stack at the specified index. This is useful if
+   * you need to add a component at any point in your navigation stack.
    *
-   * ```ts
-   * export class Detail {
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *    insertPage(){
-   *      this.nav.insert(1, Info);
-   *    }
-   *  }
-   * ```
-   *
-   * This will insert the `Info` page into the second slot of our navigation stack.
    *
    * @param {number} insertIndex  The index where to insert the page.
    * @param {Page} page  The component you want to insert into the nav stack.
@@ -548,27 +379,8 @@ export class NavController extends Ion {
   }
 
   /**
-   * Inserts multiple pages into the nav stack at the specified index.
-   *
-   * ```ts
-   * export class Detail {
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *    insertPages(){
-   *      let pages = [
-   *        { page: Info },
-   *        { page: ProfileList },
-   *        { page: ProfileDetail, params: {userId:5} }
-   *      ];
-   *      this.nav.insertPages(2, pages);
-   *    }
-   *  }
-   * ```
-   *
-   * This will insert each of the pages in the array, starting at the third slot
-   * (second index) of the nav stack. The last page in the array will animate
-   * in and become the active page.
+   * Inserts an array of components into the nav stack at the specified index.
+   * The last component in the array will animate in and become the active component
    *
    * @param {number} insertIndex  The index where you want to insert the page.
    * @param {array<{page: Page, params=: any}>} insertPages  An array of objects, each with a `page` and optionally `params` property.
@@ -577,10 +389,13 @@ export class NavController extends Ion {
    */
   insertPages(insertIndex: number, insertPages: Array<{page: any, params?: any}>, opts?: NavOptions): Promise<any> {
     let views = insertPages.map(p => new ViewController(p.page, p.params));
-    return this._insertViews(insertIndex, views, opts);
+    return this.insertViews(insertIndex, views, opts);
   }
 
-  private _insertViews(insertIndex: number, insertViews: ViewController[], opts?: NavOptions): Promise<any> {
+  /**
+   * @private
+   */
+  insertViews(insertIndex: number, insertViews: ViewController[], opts?: NavOptions): Promise<any> {
     if (!insertViews || !insertViews.length) {
       return Promise.reject('invalid pages');
     }
@@ -692,20 +507,8 @@ export class NavController extends Ion {
   }
 
   /**
-   * If you wanted to navigate back from a current view, you can use the
-   * back-button or programatically call `pop()`. Similar to `push()`, you
+   * Call to navigate back from a current component. Similar to `push()`, you
    * can also pass navigation options.
-   *
-   * ```ts
-   * class SecondView{
-   *    constructor(nav:NavController){
-   *      this.nav = nav;
-   *    }
-   *    goBack(){
-   *      this.nav.pop();
-   *    }
-   * }
-   * ```
    *
    * @param {object} [opts={}] Nav options to go with this transition.
    * @returns {Promise} Returns a promise which is resolved when the transition has completed.
@@ -730,8 +533,8 @@ export class NavController extends Ion {
   }
 
   /**
-   * Similar to `pop()`, this method let's you navigate back to the root of
-   * the stack, no matter how many pages back that is.
+   * Navigate back to the root of the stack, no matter how far back that is.
+   *
    * @param {object} [opts={}] Nav options to go with this transition.
    * @returns {Promise} Returns a promise which is resolved when the transition has completed.
    */
@@ -741,6 +544,7 @@ export class NavController extends Ion {
 
   /**
    * Pop to a specific view in the history stack.
+   *
    * @param {ViewController} view  to pop to
    * @param {object} [opts={}] Nav options to go with this transition.
    * @returns {Promise} Returns a promise which is resolved when the transition has completed.
@@ -761,17 +565,6 @@ export class NavController extends Ion {
 
   /**
    * Removes a page from the nav stack at the specified index.
-   *
-   * ```ts
-   * export class Detail {
-   *    constructor(nav: NavController) {
-   *      this.nav = nav;
-   *    }
-   *    removePage(){
-   *      this.nav.remove(1);
-   *    }
-   *  }
-   * ```
    *
    * @param {number} [startIndex]  The starting index to remove pages from the stack. Default is the index of the last page.
    * @param {number} [removeCount]  The number of pages to remove, defaults to remove `1`.
@@ -832,10 +625,12 @@ export class NavController extends Ion {
               // only we're looking for an actual NavController w/ stack of views
               leavingView.fireWillLeave();
               this.viewWillLeave.emit(leavingView);
+              this._app.viewWillLeave.emit(leavingView);
 
               return parentNav.pop(opts).then((rtnVal: boolean) => {
                 leavingView.fireDidLeave();
                 this.viewDidLeave.emit(leavingView);
+                this._app.viewDidLeave.emit(leavingView);
                 return rtnVal;
               });
             }
@@ -894,6 +689,10 @@ export class NavController extends Ion {
         // it should be removed after the transition
         view.state = STATE_REMOVE_AFTER_TRANS;
 
+      } else if (view.state === STATE_INIT_ENTER) {
+        // asked to be removed before it even entered!
+        view.state = STATE_CANCEL_ENTER;
+
       } else {
         // if this view is already leaving then no need to immediately
         // remove it, otherwise set the remove state
@@ -934,6 +733,7 @@ export class NavController extends Ion {
       view.state = STATE_INIT_LEAVE;
       view.fireWillUnload();
       this.viewWillUnload.emit(view);
+      this._app.viewWillUnload.emit(view);
 
       // from the index of the leaving view, go backwards and
       // find the first view that is inactive so it can be the entering
@@ -967,9 +767,7 @@ export class NavController extends Ion {
     // apart of any transitions that will eventually happen
     this._views.filter(v => v.state === STATE_REMOVE).forEach(view => {
       view.fireWillLeave();
-      this.viewWillLeave.emit(view);
       view.fireDidLeave();
-      this.viewDidLeave.emit(view);
       this._views.splice(this.indexOf(view), 1);
       view.destroy();
     });
@@ -1004,7 +802,6 @@ export class NavController extends Ion {
       // if no entering view then create a bogus one
       enteringView = new ViewController();
       enteringView.fireLoaded();
-      this.viewDidLoad.emit(enteringView);
     }
 
     /* Async steps to complete a transition
@@ -1062,6 +859,8 @@ export class NavController extends Ion {
       this.loadPage(enteringView, this._viewport, opts, () => {
         enteringView.fireLoaded();
         this.viewDidLoad.emit(enteringView);
+        this._app.viewDidLoad.emit(enteringView);
+
         this._postRender(transId, enteringView, leavingView, isAlreadyTransitioning, opts, done);
       });
     }
@@ -1122,6 +921,7 @@ export class NavController extends Ion {
         // view hasn't explicitly set not to
         enteringView.fireWillEnter();
         this.viewWillEnter.emit(enteringView);
+        this._app.viewWillEnter.emit(enteringView);
       }
 
       if (enteringView.fireOtherLifecycles) {
@@ -1129,6 +929,7 @@ export class NavController extends Ion {
         // view hasn't explicitly set not to
         leavingView.fireWillLeave();
         this.viewWillLeave.emit(leavingView);
+        this._app.viewWillLeave.emit(leavingView);
       }
 
     } else {
@@ -1148,9 +949,9 @@ export class NavController extends Ion {
     // create the transitions animation, play the animation
     // when the transition ends call wait for it to end
 
-    if (enteringView.state === STATE_INACTIVE) {
-      // this entering view is already set to inactive, so this
-      // transition must be canceled, so don't continue
+    if (enteringView.state === STATE_INACTIVE || enteringView.state === STATE_CANCEL_ENTER) {
+      // this entering view is already set to inactive or has been canceled
+      // so this transition must not begin, so don't continue
       return done();
     }
 
@@ -1243,13 +1044,16 @@ export class NavController extends Ion {
           // view hasn't explicitly set not to
           enteringView.fireDidEnter();
           this.viewDidEnter.emit(enteringView);
+          this._app.viewDidEnter.emit(enteringView);
         }
 
-        if (enteringView.fireOtherLifecycles) {
+        if (enteringView.fireOtherLifecycles && this._init) {
           // only fire leaving lifecycle if the entering
           // view hasn't explicitly set not to
+          // and after the nav has initialized
           leavingView.fireDidLeave();
           this.viewDidLeave.emit(leavingView);
+          this._app.viewDidLeave.emit(leavingView);
         }
       }
 
@@ -1282,6 +1086,11 @@ export class NavController extends Ion {
   private _transFinish(transId: number, enteringView: ViewController, leavingView: ViewController, direction: string, hasCompleted: boolean) {
     // a transition has completed, but not sure if it's the last one or not
     // check if this transition is the most recent one or not
+
+    if (enteringView.state === STATE_CANCEL_ENTER) {
+      // this view was told to leave before it finished entering
+      this.remove(enteringView.index, 1);
+    }
 
     if (transId === this._transIds) {
       // ok, good news, there were no other transitions that kicked
@@ -1322,9 +1131,7 @@ export class NavController extends Ion {
 
         // this check only needs to happen once, which will add the css
         // class to the nav when it's finished its first transition
-        if (!this._init) {
-          this._init = true;
-        }
+        this._init = true;
 
       } else {
         // this transition has not completed, meaning the
@@ -1356,14 +1163,6 @@ export class NavController extends Ion {
 
       // see if we should add the swipe back gesture listeners or not
       this._sbCheck();
-
-      if (this._portal) {
-        this._portal._views.forEach(view => {
-          if (view.data && view.data.dismissOnPageChange) {
-            view.dismiss();
-          }
-        });
-      }
 
     } else {
       // darn, so this wasn't the most recent transition
@@ -1408,6 +1207,8 @@ export class NavController extends Ion {
     destroys.forEach(view => {
       this._views.splice(this.indexOf(view), 1);
       view.destroy();
+      this.viewDidUnload.emit(view);
+      this._app.viewDidUnload.emit(view);
     });
 
     // if any z-index goes under 0, then reset them all
@@ -1470,6 +1271,14 @@ export class NavController extends Ion {
     addSelector(view.componentType, 'ion-page');
 
     this._compiler.resolveComponent(view.componentType).then(componentFactory => {
+
+      if (view.state === STATE_CANCEL_ENTER) {
+        // view may have already been removed from the stack
+        // if so, don't even bother adding it
+        view.destroy();
+        this._views.splice(view.index, 1);
+        return;
+      }
 
       // add more providers to just this page
       let componentProviders = ReflectiveInjector.resolve([
@@ -1581,8 +1390,7 @@ export class NavController extends Ion {
           edge: 'left',
           threshold: this._sbThreshold
         };
-        let menuCtrl = this._app.getAppInjector().get(MenuController);
-        this._sbGesture = new SwipeBackGesture(this.getNativeElement(), opts, this, menuCtrl);
+        this._sbGesture = new SwipeBackGesture(this.getNativeElement(), opts, this, this._menuCtrl);
       }
 
       if (this.canSwipeBack()) {
@@ -1678,7 +1486,7 @@ export class NavController extends Ion {
   /**
    * @private
    */
-  getByState(state: string): ViewController {
+  getByState(state: number): ViewController {
     for (var i = this._views.length - 1; i >= 0; i--) {
       if (this._views[i].state === state) {
         return this._views[i];
@@ -1773,6 +1581,18 @@ export class NavController extends Ion {
 
   /**
    * @private
+   * Dismiss all pages which have set the `dismissOnPageChange` property.
+   */
+  dismissPageChangeViews() {
+    this._views.forEach(view => {
+      if (view.data && view.data.dismissOnPageChange) {
+        view.dismiss();
+      }
+    });
+  }
+
+  /**
+   * @private
    */
   registerRouter(router: any) {
     this.routers.push(router);
@@ -1819,29 +1639,17 @@ export class NavController extends Ion {
 
 }
 
-export interface NavOptions {
-  animate?: boolean;
-  animation?: string;
-  direction?: string;
-  duration?: number;
-  easing?: string;
-  keyboardClose?: boolean;
-  preload?: boolean;
-  transitionDelay?: number;
-  progressAnimation?: boolean;
-  climbNav?: boolean;
-  ev?: any;
-}
+const STATE_ACTIVE = 1;
+const STATE_INACTIVE = 2;
+const STATE_INIT_ENTER = 3;
+const STATE_INIT_LEAVE = 4;
+const STATE_TRANS_ENTER = 5;
+const STATE_TRANS_LEAVE = 6;
+const STATE_REMOVE = 7;
+const STATE_REMOVE_AFTER_TRANS = 8;
+const STATE_CANCEL_ENTER = 9;
+const STATE_FORCE_ACTIVE = 10;
 
-const STATE_ACTIVE = 'active';
-const STATE_INACTIVE = 'inactive';
-const STATE_INIT_ENTER = 'init_enter';
-const STATE_INIT_LEAVE = 'init_leave';
-const STATE_TRANS_ENTER = 'trans_enter';
-const STATE_TRANS_LEAVE = 'trans_leave';
-const STATE_REMOVE = 'remove';
-const STATE_REMOVE_AFTER_TRANS = 'remove_after_trans';
-const STATE_FORCE_ACTIVE = 'force_active';
 const INIT_ZINDEX = 100;
 const PORTAL_ZINDEX = 9999;
 

@@ -1,17 +1,16 @@
-import {Directive, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef} from '@angular/core';
-import {NgControl} from '@angular/common';
+import { ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
-import {Config} from '../../config/config';
-import {Content} from '../content/content';
-import {Form} from '../../util/form';
-import {Item} from '../item/item';
-import {App} from '../app/app';
-import {isTrueProperty} from '../../util/util';
-import {Label} from '../label/label';
-import {pointerCoord, hasPointerMoved, closest, copyInputAttributes, Coordinates}  from '../../util/dom';
-import {NavController} from '../nav/nav-controller';
-import {NativeInput, NextInput} from './native-input';
-import {Platform} from '../../platform/platform';
+import { App } from '../app/app';
+import { closest, copyInputAttributes, Coordinates, hasPointerMoved, pointerCoord }  from '../../util/dom';
+import { Config } from '../../config/config';
+import { Content } from '../content/content';
+import { Form } from '../../util/form';
+import { isTrueProperty } from '../../util/util';
+import { Item } from '../item/item';
+import { NativeInput, NextInput } from './native-input';
+import { NavController } from '../nav/nav-controller';
+import { Platform } from '../../platform/platform';
 
 
 export class InputBase {
@@ -23,7 +22,7 @@ export class InputBase {
   protected _type: string = 'text';
   protected _useAssist: boolean;
   protected _usePadding: boolean;
-  protected _value = '';
+  protected _value: any = '';
   protected _isTouch: boolean;
   protected _autoFocusAssist: string;
   protected _autoComplete: string;
@@ -34,8 +33,8 @@ export class InputBase {
   @Input() clearInput: any;
   @Input() placeholder: string = '';
   @ViewChild(NativeInput) protected _native: NativeInput;
-  @Output() blur: EventEmitter<Event> = new EventEmitter;
-  @Output() focus: EventEmitter<Event> = new EventEmitter;
+  @Output() blur: EventEmitter<Event> = new EventEmitter<Event>();
+  @Output() focus: EventEmitter<Event> = new EventEmitter<Event>();
 
   constructor(
     config: Config,
@@ -140,7 +139,7 @@ export class InputBase {
     return this._value;
   }
 
-  set value(val) {
+  set value(val: any) {
     this._value = val;
     this.checkHasValue(val);
   }
@@ -431,16 +430,15 @@ export class InputBase {
 
   /**
    * @private
-   * Angular2 Forms API method called by the view (NgControl) to register the
+   * Angular2 Forms API method called by the view (formControlName) to register the
    * onChange event handler that updates the model (Control).
-   * https://github.com/angular/angular/blob/master/modules/angular2/src/forms/directives/shared.ts#L27
    * @param {Function} fn  the onChange event handler.
    */
   registerOnChange(fn: any) { this.onChange = fn; }
 
   /**
    * @private
-   * Angular2 Forms API method called by the view (NgControl) to register
+   * Angular2 Forms API method called by the view (formControlName) to register
    * the onTouched event handler that marks model (Control) as touched.
    * @param {Function} fn  onTouched event handler.
    */

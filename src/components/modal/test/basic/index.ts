@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ActionSheet, Config, ionicBootstrap, Modal, NavController, NavParams, PageTransition, Platform, TransitionOptions, ViewController } from '../../../../../src';
+import { ActionSheetController, Config, ionicBootstrap, ModalController, NavController, NavParams, PageTransition, Platform, TransitionOptions, ViewController } from '../../../../../src';
 
 @Component({
   templateUrl: 'main.html'
@@ -8,7 +8,7 @@ import { ActionSheet, Config, ionicBootstrap, Modal, NavController, NavParams, P
 class E2EPage {
   platforms: string[];
 
-  constructor(private nav: NavController, config: Config, platform: Platform) {
+  constructor(private nav: NavController, private modalCtrl: ModalController, config: Config, platform: Platform) {
     console.log('platforms', platform.platforms());
     console.log('mode', config.get('mode'));
 
@@ -33,22 +33,26 @@ class E2EPage {
   }
 
   presentModal() {
-    let modal = Modal.create(ModalPassData, { userId: 8675309 });
-    this.nav.present(modal);
+    let modal = this.modalCtrl.create(ModalPassData, { userId: 8675309 });
+    modal.present();
 
-    modal.onDismiss((data: any) => {
+    modal.onWillDismiss((data: any) => {
+      console.log('WILL DISMISS with data', data);
+      console.timeEnd('modal');
+    });
+    modal.onDidDismiss((data: any) => {
       console.log('modal data', data);
+      console.timeEnd('modal');
     });
   }
 
   presentModalChildNav() {
-    let modal = Modal.create(ContactUs);
-    this.nav.present(modal);
+    this.modalCtrl.create(ContactUs).present();
   }
 
   presentToolbarModal() {
-    let modal = Modal.create(ToolbarModal);
-    this.nav.present(modal);
+    let modal = this.modalCtrl.create(ToolbarModal);
+    modal.present();
 
     modal.subscribe((data: any) => {
       console.log('modal data', data);
@@ -56,23 +60,22 @@ class E2EPage {
   }
 
   presentModalWithInputs() {
-	  let modal = Modal.create(ModalWithInputs);
-    modal.onDismiss((data: any) => {
+	  let modal = this.modalCtrl.create(ModalWithInputs);
+    modal.onDidDismiss((data: any) => {
       console.log('Modal with inputs data:', data);
     });
-    this.nav.present(modal);
+    modal.present();
   }
 
   presentModalCustomAnimation() {
-    let modal = Modal.create(ContactUs);
-    this.nav.present(modal, {
+    let modal = this.modalCtrl.create(ContactUs);
+    modal.present({
       animation: 'my-fade-in'
     });
   }
 
   presentNavigableModal(){
-    let modal = Modal.create(NavigableModal);
-    this.nav.present(modal);
+    this.modalCtrl.create(NavigableModal).present();
   }
 }
 
@@ -155,27 +158,28 @@ class ModalPassData {
   }
 
   submit() {
+    console.time('modal');
     this.viewCtrl.dismiss(this.data);
   }
 
   ionViewLoaded(){
-    console.log("ModalPassData ionViewLoaded fired");
+    console.log('ModalPassData ionViewLoaded fired');
   }
 
   ionViewWillEnter(){
-    console.log("ModalPassData ionViewWillEnter fired");
+    console.log('ModalPassData ionViewWillEnter fired');
   }
 
   ionViewDidEnter(){
-    console.log("ModalPassData ionViewDidEnter fired");
+    console.log('ModalPassData ionViewDidEnter fired');
   }
 
   ionViewWillLeave(){
-    console.log("ModalPassData ionViewWillLeave fired");
+    console.log('ModalPassData ionViewWillLeave fired');
   }
 
   ionViewDidLeave(){
-    console.log("ModalPassData ionViewDidLeave fired");
+    console.log('ModalPassData ionViewDidLeave fired');
   }
 }
 
@@ -243,15 +247,15 @@ class ToolbarModal {
         <ion-list>
           <ion-item>
             <ion-label floating>Title <span [hidden]="title.valid">(Required)</span></ion-label>
-            <ion-input ngControl="title" type="text" [(ngModel)]="data.title" #title="ngForm" required autofocus></ion-input>
+            <ion-input formControlName="title" type="text" [(ngModel)]="data.title" #title="ngForm" required autofocus></ion-input>
           </ion-item>
           <ion-item>
             <ion-label floating>Note <span [hidden]="note.valid">(Required)</span></ion-label>
-            <ion-input ngControl="note" type="text" [(ngModel)]="data.note" #note="ngForm" required></ion-input>
+            <ion-input formControlName="note" type="text" [(ngModel)]="data.note" #note="ngForm" required></ion-input>
           </ion-item>
           <ion-item>
             <ion-label floating>Icon</ion-label>
-            <ion-input ngControl="icon" type="text" [(ngModel)]="data.icon" #icon="ngForm" autocomplete="on" autocorrect="on"></ion-input>
+            <ion-input formControlName="icon" type="text" [(ngModel)]="data.icon" #icon="ngForm" autocomplete="on" autocorrect="on"></ion-input>
           </ion-item>
         </ion-list>
         <div padding>
@@ -346,7 +350,7 @@ class ContactUs {
 class ModalFirstPage {
 
   private items:any[];
-  constructor(private nav: NavController) {
+  constructor(private nav: NavController, private actionSheetCtrl: ActionSheetController) {
     this.items = [];
     for ( let i = 0; i < 50; i++ ){
       this.items.push({
@@ -367,19 +371,19 @@ class ModalFirstPage {
   }
 
   ionViewLoaded(){
-    console.log("ModalFirstPage ionViewLoaded fired");
+    console.log('ModalFirstPage ionViewLoaded fired');
   }
 
   ionViewWillEnter(){
-    console.log("ModalFirstPage ionViewWillEnter fired");
+    console.log('ModalFirstPage ionViewWillEnter fired');
   }
 
   ionViewDidEnter(){
-    console.log("ModalFirstPage ionViewDidEnter fired");
+    console.log('ModalFirstPage ionViewDidEnter fired');
   }
 
   openActionSheet() {
-    let actionSheet = ActionSheet.create({
+    let actionSheet = this.actionSheetCtrl.create({
       buttons: [
         {
           text: 'Destructive',
@@ -421,7 +425,7 @@ class ModalFirstPage {
       ]
     });
 
-    this.nav.present(actionSheet);
+    actionSheet.present();
   }
 }
 
@@ -448,15 +452,15 @@ class ModalSecondPage {
   }
 
   ionViewLoaded(){
-    console.log("ModalSecondPage ionViewLoaded");
+    console.log('ModalSecondPage ionViewLoaded');
   }
 
   ionViewWillEnter(){
-    console.log("ModalSecondPage ionViewWillEnter");
+    console.log('ModalSecondPage ionViewWillEnter');
   }
 
   ionViewDidEnter(){
-    console.log("ModalSecondPage ionViewDidEnter");
+    console.log('ModalSecondPage ionViewDidEnter');
   }
 }
 
