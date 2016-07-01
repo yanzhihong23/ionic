@@ -136,8 +136,7 @@ export const SELECT_VALUE_ACCESSOR = new Provider(
     '[class.select-disabled]': '_disabled'
   },
   providers: [SELECT_VALUE_ACCESSOR],
-  encapsulation: ViewEncapsulation.None,
-  directives: [NgIf]
+  encapsulation: ViewEncapsulation.None
 })
 export class Select implements AfterContentInit, ControlValueAccessor, OnDestroy {
   private _disabled: any = false;

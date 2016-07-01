@@ -30,8 +30,7 @@ import { Spinner } from '../spinner/spinner';
   host: {
     '[attr.state]': 'r.state'
   },
-  encapsulation: ViewEncapsulation.None,
-  directives: [NgIf]
+  encapsulation: ViewEncapsulation.None
 })
 export class RefresherContent {
 

@@ -22,8 +22,7 @@ import { Spinner } from '../spinner/spinner';
   host: {
     '[attr.state]': 'inf.state'
   },
-  encapsulation: ViewEncapsulation.None,
-  directives: [NgIf]
+  encapsulation: ViewEncapsulation.None
 })
 export class InfiniteScrollContent {
 

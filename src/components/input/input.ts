@@ -169,7 +169,7 @@ export class TextInput extends InputBase {
     '<textarea [(ngModel)]="_value" (blur)="inputBlurred($event)" (focus)="inputFocused($event)" [placeholder]="placeholder" class="text-input"></textarea>' +
     '<input type="text" aria-hidden="true" next-input *ngIf="_useAssist">' +
     '<div (touchstart)="pointerStart($event)" (touchend)="pointerEnd($event)" (mousedown)="pointerStart($event)" (mouseup)="pointerEnd($event)" class="input-cover" tappable *ngIf="_useAssist"></div>',
-  directives: [NativeInput, NextInput, NgIf],
+  directives: [NativeInput, NextInput, NgIf, NgModel],
   encapsulation: ViewEncapsulation.None,
 })
 export class TextArea extends InputBase {

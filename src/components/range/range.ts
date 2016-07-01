@@ -22,7 +22,6 @@ export const RANGE_VALUE_ACCESSOR = new Provider(
     <div class="range-pin" *ngIf="range.pin">{{_val}}</div>
     <div class="range-knob"></div>
   `,
-  directives: [NgIf],
   host: {
     '[class.range-knob-pressed]': 'pressed',
     '[class.range-knob-min]': '_val===range.min',
