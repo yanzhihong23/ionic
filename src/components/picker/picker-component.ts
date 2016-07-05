@@ -39,7 +39,7 @@ import { ViewController } from '../nav/view-controller';
 })
 export class PickerColumnCmp {
   @ViewChild('colEle') colEle: ElementRef;
-  @Input() col: PickerColumn;
+  @Input() col: any;
   y: number = 0;
   colHeight: number;
   optHeight: number;
