@@ -260,12 +260,11 @@ function tsCompile(options, cacheName){
 }
 
 gulp.task('bundle.es6', function() {
-  var babel = require('gulp-babel');
 
   gulp.src([
-      'src/components/slides/swiper-widget.js'
+      'src/components/slides/swiper-widget.es2015.js'
     ])
-    .pipe(gulp.dest('dist/esm/components/slides'));
+    .pipe(gulp.dest('dist/components/slides'));
 
   var es6options = {
     emitDecoratorMetadata: true,
@@ -276,7 +275,7 @@ gulp.task('bundle.es6', function() {
     typescript: require('typescript')
   }
   return tsCompile(es6options, 'bundle.es6')
-    .pipe(gulp.dest('dist/esm'));
+    .pipe(gulp.dest('dist'));
 });
 
 /**
