@@ -2,13 +2,6 @@
 # gulp package
 
 ./node_modules/.bin/ngc -p ngcConfig.json && \
-  gulp bundle.es6 && \
-  find ./src -name "*metadata.json" | sed 's/\.\/src//g' | awk '{print "cp \.\/src" $1 " ./dist/esm" $1}' | sh && \
-  find ./src -name "*metadata.json" | sed 's/\.\/src//g' | awk '{print "mv \.\/src" $1 " ./dist" $1}' | sh && \
-  find ./src -name "*.d.ts" | sed 's/\.\/src//g' | awk '{print "mv \.\/src" $1 " ./dist/esm" $1}' | sh && \
-  find dist/esm -name "*.ngfactory.js" | sed 's/dist\/esm//g' | awk '{print "cp dist/esm" $1 " dist" $1}' | sh
-  git checkout src/components/slides/swiper-widget.d.ts
-
-# git status | grep "src/" | grep ".js" | awk '{print "rm " $1}' | sh
-# git status | grep "src/" | grep "ngfactory.ts" | awk '{print "rm " $1}' | sh
+  cp src/components/slides/swiper-widget.es2015.js dist/components/slides/swiper-widget.js && \
+  find src -name "*ngfactory.ts" | awk '{print "rm " $1}' | sh
 

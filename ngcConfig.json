@@ -3,12 +3,14 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
-    "module": "commonjs",
+    "module": "es2015",
+    "moduleResolution": "node",
     "declaration": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "outDir": "dist"
   },
   "files": [
-    "src/index.ts",
-    "typings/browser.d.ts"
+    "./src/index.ts",
+    "./typings/browser.d.ts"
   ]
 }
