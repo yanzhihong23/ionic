@@ -217,31 +217,13 @@ gulp.task('bundle.system', function(){
  * them to dist. When the '--typecheck' flag is specified, generates .d.ts
  * definitions and does typechecking.
  */
-gulp.task('transpile', function(){
-  var gulpif = require('gulp-if');
-  var stripDebug = require('gulp-strip-debug');
-
-  var tscOpts = getTscOptions(TYPECHECK ? 'typecheck' : undefined);
-  var tsResult = tsCompile(tscOpts, 'transpile')
-    .on('error', function(err) {
-      console.log(err.message);
-    });
-
-  if (TYPECHECK) {
-    tsResult.on('error', function(err) {
-      process.exit(1);
-    });
-    var merge = require('merge2');
-    var js = tsResult.js;
-    var dts = tsResult.dts;
-    if (!DEBUG) js = js.pipe(stripDebug());
-    // merge definition and source streams
-    return merge([js, dts])
-      .pipe(gulp.dest('dist'));
-  }
-
-  if (!DEBUG) tsResult = tsResult.pipe(stripDebug());
-  return tsResult.pipe(gulp.dest('dist'));
+gulp.task('transpile', function(done){
+  var exec = require('child_process').exec;
+  var gitStatusResult = exec('npm run ngc', function(err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    done(err);
+  });
 });
 
 function tsCompile(options, cacheName){
@@ -258,25 +240,6 @@ function tsCompile(options, cacheName){
     .pipe(cache(cacheName, { optimizeMemory: true }))
     .pipe(tsc(options, undefined, tscReporter));
 }
-
-gulp.task('bundle.es6', function() {
-
-  gulp.src([
-      'src/components/slides/swiper-widget.es2015.js'
-    ])
-    .pipe(gulp.dest('dist/components/slides'));
-
-  var es6options = {
-    emitDecoratorMetadata: true,
-    experimentalDecorators: true,
-    target: "es5",
-    module: "es2015",
-    isolatedModules: true,
-    typescript: require('typescript')
-  }
-  return tsCompile(es6options, 'bundle.es6')
-    .pipe(gulp.dest('dist'));
-});
 
 /**
  * Compiles Ionic Sass sources to stylesheets and outputs them to dist/bundles.

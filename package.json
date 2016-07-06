@@ -22,7 +22,8 @@
   "scripts": {
     "test": "gulp karma",
     "test:generators": "jasmine-node ./tooling/spec",
-    "link": "npm install && gulp src && npm link"
+    "link": "npm install && gulp src && npm link",
+    "ngc": "ngc -p ngcConfig.json && cp src/components/slides/swiper-widget.es2015.js dist/components/slides/swiper-widget.js && find src -name '*ngfactory.ts' | awk '{print \"rm \" $1}' | sh"
   },
   "dependencies": {
     "@angular/common": "2.0.0-rc.4",
