@@ -32,7 +32,11 @@ function getTscOptions(name) {
     target: "es5",
     module: "commonjs",
     isolatedModules: true,
-    typescript: require('typescript')
+    typescript: require('typescript'),
+    types: [
+      "es6-shim",
+      "jasmine"
+    ]
   }
 
   if (name === "typecheck") {
