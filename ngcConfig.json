@@ -9,6 +9,9 @@
     "noImplicitAny": false,
     "outDir": "dist"
   },
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true
+  },
   "files": [
     "./src/index.ts",
     "./typings/browser.d.ts"
