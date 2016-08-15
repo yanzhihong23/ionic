@@ -25,6 +25,21 @@ class E2EApp {
   removeItem() {
     this.storage.remove('name');
   }
+  keys() {
+    this.storage.keys().then(keys => {
+      console.log('KEYS', keys);
+    });
+  }
+  length() {
+    this.storage.length().then(len => {
+      console.log('KEYS', len);
+    })
+  }
+  forEach() {
+    this.storage.forEach((value, key, index) => {
+      console.log('ITER', value, key, index);
+    })
+  }
 }
 
 ionicBootstrap(E2EApp);

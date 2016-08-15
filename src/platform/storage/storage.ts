@@ -43,6 +43,29 @@ export class Storage {
   remove(key: string) {
     return this._db.removeItem(key);
   }
+
+  clear() {
+    return this._db.clear();
+  }
+
+  /**
+   * @return the number of keys stored.
+   */
+  length() {
+    return this._db.length();
+  }
+
+  /**
+   * @return the keys in the store.
+   */
+  keys() {
+    return this._db.keys();
+  }
+
+  forEach(iteratorCallback: (value: any, key: string, iterationNumber: Number) => any) {
+    return this._db.iterate(iteratorCallback);
+  }
+
   /*
   getJson(key: string): Promise<any> {
     return this.get(key).then(value => {
