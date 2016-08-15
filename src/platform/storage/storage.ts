@@ -1,3 +1,9 @@
+import { Injectable } from '@angular/core';
+
+import * as LocalForage from 'localforage';
+
+import { Config } from '../../config/config';
+
 /**
  * Storage is an easy way to store key/value pairs and other complicated
  * data in a way that uses a variety of storage engines underneath.
@@ -7,20 +13,28 @@
  * for temporary data as it may be 'cleaned up' by the operation system
  * during low disk space situations.
  */
-/**
- * @private
-*/
-export class Storage {
-  private _strategy: StorageEngine;
 
+@Injectable()
+export class Storage {
+  constructor(public config: Config) {
+
+    console.log('Got config', config);
+  }
+
+  /*
   constructor(strategyCls: IStorageEngine, options?: any) {
     this._strategy = new strategyCls(options);
   }
+  */
 
+
+  /*
   get(key: string): Promise<any> {
     return this._strategy.get(key);
   }
+  */
 
+  /*
   getJson(key: string): Promise<any> {
     return this.get(key).then(value => {
       try {
@@ -55,31 +69,5 @@ export class Storage {
   clear() {
     return this._strategy.clear();
   }
-}
-
-export interface IStorageEngine {
-  new (options: any): StorageEngine;
-}
-
-/**
- * @private
-*/
-export class StorageEngine {
-  constructor(options = {}) { }
-
-  get(key: string): Promise<any> {
-    throw Error('get() not implemented for this storage engine');
-  }
-  set(key: string, value: any): Promise<any> {
-    throw Error('set() not implemented for this storage engine');
-  }
-  remove(key: string): Promise<any> {
-    throw Error('remove() not implemented for this storage engine');
-  }
-  query(query: string, params?: any): Promise<any> {
-    throw Error('query() not implemented for this storage engine');
-  }
-  clear(): Promise<any> {
-    throw Error('clear() not implemented for this storage engine');
-  }
+  */
 }

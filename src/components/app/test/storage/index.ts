@@ -1,51 +1,55 @@
 import { Component } from '@angular/core';
-import { ionicBootstrap, Storage, LocalStorage, SqlStorage } from '../../../../../src';
+import { ionicBootstrap, Storage } from '../../../../../src';
 
 
 @Component({
-  templateUrl: 'main.html'
+  templateUrl: 'main.html',
+  providers: [Storage]
 })
 class E2EApp {
-  local: Storage;
-  sql: Storage;
-
-  constructor() {
-    this.local = new Storage(LocalStorage);
-    this.sql = new Storage(SqlStorage);
+  constructor(public storage: Storage) {
   }
 
   getLocal() {
-    this.local.get('name').then(value => {
+    /*
+    this.storage.get('name').then(value => {
       alert('Your name is: ' + value);
     });
+    */
   }
 
   setLocal() {
+    /*
     let name = prompt('Your name?');
 
     this.local.set('name', name);
+    */
   }
 
   removeLocal() {
-    this.local.remove('name');
+    //this.local.remove('name');
   }
 
   getSql() {
+    /*
     this.sql.get('name').then(value => {
       alert('Your name is: ' + value);
     }, (errResult) => {
       console.error('Unable to get item from SQL db:', errResult);
     });
+    */
   }
 
   setSql() {
+    /*
     let name = prompt('Your name?');
 
     this.sql.set('name', name);
+    */
   }
 
   removeSql() {
-    this.sql.remove('name');
+    //this.sql.remove('name');
   }
 }
 
