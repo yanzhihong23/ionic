@@ -10,46 +10,20 @@ class E2EApp {
   constructor(public storage: Storage) {
   }
 
-  getLocal() {
-    /*
+  getItem() {
     this.storage.get('name').then(value => {
       alert('Your name is: ' + value);
     });
-    */
   }
 
-  setLocal() {
-    /*
+  setItem() {
     let name = prompt('Your name?');
 
-    this.local.set('name', name);
-    */
+    this.storage.set('name', name);
   }
 
-  removeLocal() {
-    //this.local.remove('name');
-  }
-
-  getSql() {
-    /*
-    this.sql.get('name').then(value => {
-      alert('Your name is: ' + value);
-    }, (errResult) => {
-      console.error('Unable to get item from SQL db:', errResult);
-    });
-    */
-  }
-
-  setSql() {
-    /*
-    let name = prompt('Your name?');
-
-    this.sql.set('name', name);
-    */
-  }
-
-  removeSql() {
-    //this.sql.remove('name');
+  removeItem() {
+    this.storage.remove('name');
   }
 }
 

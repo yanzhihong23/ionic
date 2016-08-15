@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+//declare var require: any;
+//const localforage: LocalForage = require("localforage");
 import * as LocalForage from 'localforage';
 
 import { Config } from '../../config/config';
@@ -19,21 +21,28 @@ export class Storage {
   constructor(public config: Config) {
 
     console.log('Got config', config);
+
+    console.log(LocalForage);
+
+    this._db = LocalForage.default;
+    console.log(this._db);
+    this._db.config({
+      name        : '_ionicstorage',
+      storeName   : '_ionickv'
+    });
   }
 
-  /*
-  constructor(strategyCls: IStorageEngine, options?: any) {
-    this._strategy = new strategyCls(options);
-  }
-  */
-
-
-  /*
   get(key: string): Promise<any> {
-    return this._strategy.get(key);
+    return this._db.getItem(key);
   }
-  */
 
+  set(key: string, value: any) {
+    return this._db.setItem(key, value);
+  }
+
+  remove(key: string) {
+    return this._db.removeItem(key);
+  }
   /*
   getJson(key: string): Promise<any> {
     return this.get(key).then(value => {
@@ -54,9 +63,6 @@ export class Storage {
     }
   }
 
-  set(key: string, value: any) {
-    return this._strategy.set(key, value);
-  }
 
   remove(key: string) {
     return this._strategy.remove(key);
