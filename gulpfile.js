@@ -9,7 +9,7 @@ var rename = require('gulp-rename');
 var through2 = require('through2');
 var runSequence = require('run-sequence');
 var watch = require('gulp-watch');
-var tsc = require('gulp-typescript');
+var ts = require('gulp-typescript');
 var cache = require('gulp-cached');
 var remember = require('gulp-remember');
 var minimist = require('minimist');
@@ -135,6 +135,31 @@ gulp.task('transpile.cjs', function(done) {
     console.log(stderr);
     done(err);
   });
+});
+
+/**
+ * Transpiles TypeScript sources to ES5 in the CommonJS module format and outputs
+ * them to dist. When the '--typecheck' flag is specified, generates .d.ts
+ * definitions and does typechecking.
+ */
+gulp.task('transpile.karma', function(done) {
+  /*var exec = require('child_process').exec;
+  var shellCommand = 'cp ./scripts/build/karmaNgcConfig.json ./karmaNgcConfig.json && ' +
+    './node_modules/.bin/ngc -p ./karmaNgcConfig.json';
+
+  exec(shellCommand, function(err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+
+    fs.unlink('./karmaNgcConfig.json', function() {
+      done(err);
+    });
+  });
+  */
+  var tsProject = ts.createProject('./scripts/build/karma-tsconfig.json', { typescript: require('typescript')});
+  var tsResult = tsProject.src() // instead of gulp.src(...) 
+        .pipe(ts(tsProject));
+  return tsResult.js.pipe(gulp.dest('test'));
 });
 
 /**
@@ -578,11 +603,11 @@ gulp.task('build.demos.old', function() {
 
   var tsResult = gulp.src(['demos/**/*.ts'])
     .pipe(cache('demos.ts'))
-    .pipe(tsc(getTscOptions(), undefined, tscReporter))
+    .pipe(ts(getTscOptions(), undefined, tscReporter))
     .on('error', function(error) {
       console.log(error.message);
     })
-    .pipe(gulpif(/index.js$/, createIndexHTML())) //TSC changes .ts to .js
+    .pipe(gulpif(/index.js$/, createIndexHTML()))
 
   var demoFiles = gulp.src([
       'demos/**/*',
@@ -808,7 +833,7 @@ gulp.task('build.demos', function(done) {
 require('./scripts/snapshot/snapshot.task')(gulp, argv, buildConfig);
 
 // requires bundle.system to be run once
-gulp.task('karma', ['tests'], function(done) {
+gulp.task('karma', ['transpile.karma'], function(done) {
   var karma = require('karma').server;
   karma.start({
     configFile: __dirname + '/scripts/karma/karma.conf.js'

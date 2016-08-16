@@ -1,17 +1,17 @@
 import { ChangeDetectorRef, ElementRef, NgZone, Renderer } from '@angular/core';
 import { Location } from '@angular/common';
 
-import { App, Config, DeepLinker, Form, GestureController, Keyboard, MenuController, NavLinkConfig, NavOptions, Platform, Tab, Tabs, Transition, UrlSerializer, ViewController } from '../../src';
-import { NavControllerBase } from '../../src/components/nav/nav-controller-base';
+import { App, Config, DeepLinker, Form, GestureController, Keyboard, MenuController, NavOptions, Platform, Tab, Tabs, Transition, ViewController } from '../index';
+import { NavControllerBase } from '../navigation/nav-controller-base';
 import { TabButton } from '../../src/components/tabs/tab-button';
 
 
 export const mockConfig = function(config?: any) {
-  return new Config(config);
+  return new Config();
 };
 
 export const mockPlatform = function(platforms?: string[]) {
-  return new Platform(platforms);
+  return new Platform();
 };
 
 export const mockApp = function(config?: Config, platform?: Platform) {
@@ -82,7 +82,7 @@ export const mockNavController = function(): NavControllerBase {
   let platform = mockPlatform();
 
   let config = mockConfig();
-  config.setPlatform(platform);
+  //config.setPlatform(platform);
 
   let app = mockApp(config, platform);
 
@@ -100,13 +100,13 @@ export const mockNavController = function(): NavControllerBase {
 
   let gestureCtrl = new GestureController(app);
 
-  let navLikConfig = new NavLinkConfig([]);
+  //let navLikConfig = new NavLinkConfig([]);
 
-  let serializer = new UrlSerializer(navLikConfig);
+  //let serializer = new UrlSerializer(navLikConfig);
 
   let location = mockLocation();
 
-  let deepLinker = new DeepLinker(app, serializer, location);
+  let deepLinker = new DeepLinker(app, null, location);
 
   return new NavControllerBase(
     null,
@@ -118,15 +118,17 @@ export const mockNavController = function(): NavControllerBase {
     renderer,
     compiler,
     gestureCtrl,
+    null,
     deepLinker
   );
+  
 };
 
 export const mockTab = function(parentTabs: Tabs): Tab {
   let platform = mockPlatform();
 
   let config = mockConfig();
-  config.setPlatform(platform);
+  //config.setPlatform(platform);
 
   let app = (<any>parentTabs)._app || mockApp(config, platform);
 
@@ -146,13 +148,13 @@ export const mockTab = function(parentTabs: Tabs): Tab {
 
   let gestureCtrl = new GestureController(app);
 
-  let navLikConfig = new NavLinkConfig([]);
+  //let navLikConfig = new NavLinkConfig([]);
 
-  let serializer = new UrlSerializer(navLikConfig);
+  //let serializer = new UrlSerializer(navLikConfig);
 
   let location = mockLocation();
 
-  let linker = new DeepLinker(app, serializer, location);
+  let linker = new DeepLinker(app, null, location);
 
   let tab = new Tab(
     parentTabs,
@@ -165,6 +167,7 @@ export const mockTab = function(parentTabs: Tabs): Tab {
     compiler,
     changeDetectorRef,
     gestureCtrl,
+    null,
     linker
   );
 

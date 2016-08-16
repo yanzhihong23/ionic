@@ -1,4 +1,5 @@
-import { Button, Config } from '../../../../src';
+import { Button } from '../button';
+import { Config } from '../../../config/config';
 
 export function run() {
 
@@ -176,9 +177,7 @@ export function run() {
     });
 
     it('should add disable-hover css class', () => {
-      let config = new Config({
-        hoverCSS: false
-      });
+      let config = new Config();
       let b = mockButton(null, config);
 
       expect(hasClass(b, 'disable-hover')).toEqual(true);

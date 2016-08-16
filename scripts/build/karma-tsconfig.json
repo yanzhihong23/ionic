@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "es2015",
+    "module": "commonjs",
     "lib": ["dom", "es2015"],
     "moduleResolution": "node",
     "declaration": true,
     "noImplicitAny": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "dist/es6"
+    "outDir": "test",
+    "types" : ["jasmine"]
   },
   "angularCompilerOptions": {
-    "genDir": "dist/es6",
+    "genDir": "test",
     "skipTemplateCodegen": true
   },
-  "files": [
-    "./src/index.ts"
+  "include": [
+    "./src/**/*.spec.ts"
   ]
 }

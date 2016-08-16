@@ -8,10 +8,10 @@
     "noImplicitAny": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "dist"
+    "outDir": "dist/commonjs"
   },
   "angularCompilerOptions": {
-    "genDir": "dist",
+    "genDir": "dist/commonjs",
     "skipTemplateCodegen": true
   },
   "files": [
