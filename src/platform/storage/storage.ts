@@ -4,18 +4,14 @@ import { Injectable } from '@angular/core';
 //const localforage: LocalForage = require("localforage");
 import * as LocalForage from 'localforage';
 
+//import { LocalForageDriver } from 'localforage-cordovasqlitedriver';
+
 import { Config } from '../../config/config';
 
 /**
  * Storage is an easy way to store key/value pairs and other complicated
  * data in a way that uses a variety of storage engines underneath.
- *
- * For most cases, we recommend the SqlStorage system as it will store
- * data in a file in the app's sandbox. LocalStorage should ONLY be used
- * for temporary data as it may be 'cleaned up' by the operation system
- * during low disk space situations.
  */
-
 @Injectable()
 export class Storage {
   constructor(public config: Config) {
@@ -30,6 +26,13 @@ export class Storage {
       name        : '_ionicstorage',
       storeName   : '_ionickv'
     });
+
+    this._db.setDriver([
+      //LocalForageDriver._driver,
+      LocalForage.INDEXEDDB,
+      LocalForage.WEBSQL,
+      LocalForage.LOCALSTORAGE
+    ])
   }
 
   get(key: string): Promise<any> {
