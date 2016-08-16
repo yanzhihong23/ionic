@@ -4,9 +4,11 @@ import { Injectable } from '@angular/core';
 //const localforage: LocalForage = require("localforage");
 import * as LocalForage from 'localforage';
 
-//import { LocalForageDriver } from 'localforage-cordovasqlitedriver';
+import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import { Config } from '../../config/config';
+
+console.log('LocalForageDriver', CordovaSQLiteDriver);
 
 /**
  * Storage is an easy way to store key/value pairs and other complicated
@@ -28,7 +30,7 @@ export class Storage {
     });
 
     this._db.setDriver([
-      //LocalForageDriver._driver,
+      CordovaSQLiteDriver._driver,
       LocalForage.INDEXEDDB,
       LocalForage.WEBSQL,
       LocalForage.LOCALSTORAGE
