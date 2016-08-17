@@ -34,7 +34,13 @@ export class Storage {
 
     console.log(LocalForage);
 
-    this._db = LocalForage.default;
+    // TODO: Remove this once we figure out our proper build
+    if(LocalForage.default) {
+      this._db = LocalForage.default;
+    } else {
+      this._db = LocalForage;
+    }
+
     console.log(this._db);
     this._db.config({
       name        : '_ionicstorage',
