@@ -16,6 +16,8 @@ console.log('LocalForageDriver', CordovaSQLiteDriver);
  */
 @Injectable()
 export class Storage {
+  _db: any;
+
   constructor(public config: Config) {
 
     console.log('Got config', config);
