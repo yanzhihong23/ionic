@@ -233,7 +233,7 @@ class ModalPassData {
 @Component({
   template: `
     <ion-header>
-      <ion-toolbar primary>
+      <ion-toolbar color="primary">
         <ion-title>Toolbar 1</ion-title>
       </ion-toolbar>
 
@@ -280,7 +280,7 @@ class ToolbarModal {
 @Component({
   template: `
     <ion-header>
-      <ion-toolbar secondary>
+      <ion-toolbar color="secondary">
         <ion-buttons start>
           <button ion-button (click)="dismiss()">Close</button>
         </ion-buttons>

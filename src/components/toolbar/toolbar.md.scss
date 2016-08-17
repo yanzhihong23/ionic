@@ -106,7 +106,7 @@ ion-footer[no-shadow]::before,
 }
 
 @mixin md-toolbar-theme($color-name, $color-base, $color-contrast) {
-  .toolbar[#{$color-name}] {
+  .toolbar-#{$color-name} {
     $fg-color: color-contrast($colors-md, $color-base, md);
 
     .toolbar-background {

@@ -220,7 +220,7 @@ export class Tab3 {
   template: `
     <ion-menu [content]="content">
       <ion-header>
-        <ion-toolbar secondary>
+        <ion-toolbar color="secondary">
           <ion-title>Menu</ion-title>
         </ion-toolbar>
       </ion-header>

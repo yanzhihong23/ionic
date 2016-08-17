@@ -68,7 +68,7 @@ $navbar-wp-height:                       $toolbar-wp-height !default;
 }
 
 @mixin wp-toolbar-theme($color-name, $color-base, $color-contrast) {
-  .toolbar[#{$color-name}] {
+  .toolbar-#{$color-name} {
     $fg-color: $color-contrast;
 
     .toolbar-background {

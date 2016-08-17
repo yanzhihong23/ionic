@@ -110,7 +110,7 @@ ion-title {
 }
 
 @mixin ios-toolbar-theme($color-name, $color-base, $color-contrast) {
-  .toolbar[#{$color-name}] {
+  .toolbar-#{$color-name} {
 
     .toolbar-background {
       border-color: darken($color-base, 10%);
