@@ -6,7 +6,7 @@ import * as LocalForage from 'localforage';
 
 import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
-import { Config } from '../../config/config';
+import { Config } from '../config/config';
 
 console.log('LocalForageDriver', CordovaSQLiteDriver);
 

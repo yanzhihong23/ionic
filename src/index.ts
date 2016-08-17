@@ -15,7 +15,8 @@ export * from './gestures/slide-gesture';
 export * from './gestures/gesture-controller';
 
 export * from './platform/platform';
-export * from './platform/storage';
+
+export * from './storage/storage'
 
 export * from './util/click-block';
 export * from './util/events';
