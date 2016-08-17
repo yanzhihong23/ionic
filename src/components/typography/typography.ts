@@ -1,19 +1,14 @@
 import { Directive, ElementRef, Input, Renderer } from '@angular/core';
 
-import { Config } from '../../config/config';
-
 
 /**
-  * @name Badge
-  * @module ionic
-  * @description
-  * Badges are simple components in Ionic containing numbers or text. You can display a badge to indicate that there is new information associated with the item it is on.
-  * @see {@link /docs/v2/components/#badges Badges Component Docs}
+  * @private
+  * Select all of the HTML text elements with the color attribute to apply the text-color class.
  */
 @Directive({
-  selector: 'ion-badge'
+  selector: 'h1[color], h2[color], h3[color], h4[color], h5[color], h6[color], a[color], p[color], span[color], b[color], i[color], strong[color], em[color], small[color], sub[color], sup[color]'
 })
-export class Badge {
+export class Typography {
   /** @internal */ 
   _color: string;
 
@@ -30,7 +25,6 @@ export class Badge {
   }
 
   constructor(
-    config: Config,
     private _elementRef: ElementRef,
     private _renderer: Renderer
   ) { }
@@ -49,7 +43,7 @@ export class Badge {
    */
   _setElementColor(color: string, isAdd: boolean) {
     if (color !== null && color !== '') {
-      this._renderer.setElementClass(this._elementRef.nativeElement, `badge-${color}`, isAdd);
+      this._renderer.setElementClass(this._elementRef.nativeElement, `text-${color}`, isAdd);
     }
   }
 }

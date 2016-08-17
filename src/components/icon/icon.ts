@@ -195,7 +195,7 @@ export class Icon {
    * @internal
    */
   _setElementColor(color: string, isAdd: boolean) {
-    if (color != null && color != '') {
+    if (color !== null && color !== '') {
       this._renderer.setElementClass(this._elementRef.nativeElement, `icon-${color}`, isAdd);
     }
   }

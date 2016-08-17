@@ -128,7 +128,7 @@ export class Checkbox implements AfterContentInit, ControlValueAccessor, OnDestr
    * @internal
    */
   _setElementColor(color: string, isAdd: boolean) {
-    if (color != null && color != '') {
+    if (color !== null && color !== '') {
       this._renderer.setElementClass(this._elementRef.nativeElement, `checkbox-${color}`, isAdd);
     }
   }
