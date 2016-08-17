@@ -19,10 +19,9 @@ module.exports = function(config) {
       'node_modules/systemjs/dist/system.js',
       'scripts/karma/system.config.js',
       'node_modules/rxjs/bundles/Rx.min.js',
-      'dist/bundles/ionic.system.js',
+      'dist/system/ionic.system.js',
       { pattern: 'node_modules/@angular/**/*.js', included: false},
-      { pattern: 'dist/tests/**/*.spec.js', included: false },
-      // { pattern: 'dist/tests/components/nav/**/*.spec.js', included: false },
+      { pattern: 'test/**/*.spec.js', included: false },
       { pattern: 'src/**/*.js', included: false },
       'scripts/karma/test-main.js'
     ],

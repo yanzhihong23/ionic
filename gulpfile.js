@@ -137,29 +137,16 @@ gulp.task('transpile.cjs', function(done) {
   });
 });
 
-/**
- * Transpiles TypeScript sources to ES5 in the CommonJS module format and outputs
- * them to dist. When the '--typecheck' flag is specified, generates .d.ts
- * definitions and does typechecking.
- */
 gulp.task('transpile.karma', function(done) {
-  /*var exec = require('child_process').exec;
-  var shellCommand = 'cp ./scripts/build/karmaNgcConfig.json ./karmaNgcConfig.json && ' +
-    './node_modules/.bin/ngc -p ./karmaNgcConfig.json';
+  var exec = require('child_process').exec;
+  var shellCommand = 'cp ./scripts/build/karma-tsconfig.json ./karma-tsconfig.json && ' +
+    './node_modules/.bin/ngc -p ./karma-tsconfig.json';
 
   exec(shellCommand, function(err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
-
-    fs.unlink('./karmaNgcConfig.json', function() {
-      done(err);
-    });
+    done(err);
   });
-  */
-  var tsProject = ts.createProject('./scripts/build/karma-tsconfig.json', { typescript: require('typescript')});
-  var tsResult = tsProject.src() // instead of gulp.src(...) 
-        .pipe(ts(tsProject));
-  return tsResult.js.pipe(gulp.dest('test'));
 });
 
 /**
@@ -832,8 +819,12 @@ gulp.task('build.demos', function(done) {
  */
 require('./scripts/snapshot/snapshot.task')(gulp, argv, buildConfig);
 
+gulp.task('karma', function(done){
+    runSequence('transpile.karma', 'bundle.system', 'karma-internal', done);
+});
+
 // requires bundle.system to be run once
-gulp.task('karma', ['transpile.karma'], function(done) {
+gulp.task('karma-internal', function(done) {
   var karma = require('karma').server;
   karma.start({
     configFile: __dirname + '/scripts/karma/karma.conf.js'
@@ -1124,4 +1115,46 @@ gulp.task('tslint', function() {
       '!src/**/test/**/*',
     ]).pipe(tslint())
       .pipe(tslint.report('verbose'));
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// We use Babel to easily create named System.register modules
+// See: https://github.com/Microsoft/TypeScript/issues/4801
+// and https://github.com/ivogabe/gulp-typescript/issues/211
+var bableSystemJsOptions = {
+  presets: ['es2015'],
+  plugins: ['transform-es2015-modules-systemjs'],
+  moduleIds: true,
+  getModuleId: function(name) {
+    return 'ionic-angular/' + name;
+  }
+}
+/**
+ * Transpiles TypeScript sources to ES5 in the CommonJS module format and outputs
+ * them to dist. When the '--typecheck' flag is specified, generates .d.ts
+ * definitions and does typechecking.
+ */
+gulp.task('bundle.system', ['transpile.es2015'], function() {
+  var concat = require('gulp-concat');
+  var babel = require('gulp-babel');
+  return gulp.src(['./dist/esm/**/*.js'])
+        .pipe(babel(bableSystemJsOptions))
+        .pipe(concat('ionic.system.js'))
+        .pipe(gulp.dest('./dist/system/'));
 });

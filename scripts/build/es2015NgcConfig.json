@@ -8,10 +8,10 @@
     "noImplicitAny": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "dist/es6"
+    "outDir": "dist/esm"
   },
   "angularCompilerOptions": {
-    "genDir": "dist/es6",
+    "genDir": "dist/esm",
     "skipTemplateCodegen": true
   },
   "files": [
