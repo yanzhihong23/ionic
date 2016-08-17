@@ -11,7 +11,6 @@ import { closest, nativeTimeout } from '../util/dom';
 import { Events } from '../util/events';
 import { FeatureDetect } from '../util/feature-detect';
 import { Form } from '../util/form';
-import { IonicGestureConfig } from '../gestures/ionic-gesture-config';
 import { GestureController } from '../gestures/gesture-controller';
 import { IONIC_DIRECTIVES } from './directives';
 import { isPresent } from '../util/util';
@@ -34,7 +33,7 @@ import { Translate } from '../translation/translate';
 export function ionicProviders(customProviders?: Array<any>, config?: any): any[] {
   // create an instance of Config
   if (!(config instanceof Config)) {
-    config = new Config(config);
+    config = new Config();
   }
 
   // enable production mode if config set to true
@@ -46,7 +45,7 @@ export function ionicProviders(customProviders?: Array<any>, config?: any): any[
   let platform = new Platform();
 
   // initialize platform
-  platform.setUrl(window.location.href);
+  //platform.setUrl(window.location.href);
   platform.setUserAgent(window.navigator.userAgent);
   platform.setNavigatorPlatform(window.navigator.platform);
   platform.load();
@@ -82,8 +81,6 @@ export function ionicProviders(customProviders?: Array<any>, config?: any): any[
     ToastController,
     Translate,
   ];
-
-  providers.push( {provide: HAMMER_GESTURE_CONFIG, useClass: IonicGestureConfig} );
 
   if (isPresent(customProviders)) {
     providers.push(customProviders);
@@ -137,7 +134,7 @@ function setupDom(window: Window, document: Document, config: Config, platform: 
   }
 
   // run feature detection tests
-  featureDetect.run(window, document);
+  //featureDetect.run(window, document);
 }
 
 

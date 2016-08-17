@@ -2,17 +2,21 @@
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
-    "module": "es6",
-    "lib": ["dom", "es2015"],
+    "target": "es5",
+    "module": "commonjs",
     "declaration": true,
-    "outDir": "dist/ide",
-    "noImplicitAny": false,
-    "suppressImplicitAnyIndexErrors": true
+    "outDir": "dist",
+    "noImplicitAny": true
   },
+  "filesGlob": [
+    "src/**/*.ts",
+    "!node_modules/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "scripts"
+    "scripts",
+    "typings/main",
+    "typings/main.d.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false,

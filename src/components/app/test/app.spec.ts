@@ -9,6 +9,7 @@ describe('App', () => {
   describe('navPop', () => {
 
     it('should select the previous tab', () => {
+      console.debug("TEST TEST TEST!!!!!!!!!!!!!!!!!!!!!!");
       let nav = mockNavController();
       let portal = mockNavController();
       app.setPortal(portal);
