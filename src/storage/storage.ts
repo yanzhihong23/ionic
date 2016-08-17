@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import * as LocalForage from 'localforage';
 
-//import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
+import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import { Config } from '../config/config';
 
@@ -42,14 +42,12 @@ export class Storage {
       storeName   : '_ionickv'
     });
 
-    /*
     this._db.setDriver([
       //CordovaSQLiteDriver._driver,
-      LocalForage.INDEXEDDB,
-      LocalForage.WEBSQL,
-      LocalForage.LOCALSTORAGE
+      this._db.INDEXEDDB,
+      this._db.WEBSQL,
+      this._db.LOCALSTORAGE
     ])
-    */
   }
 
   /**
