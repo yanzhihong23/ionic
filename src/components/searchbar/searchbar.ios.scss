@@ -228,7 +228,7 @@ ion-searchbar {
     }
   }
 
-  .toolbar[#{$color-name}] ion-searchbar {
+  .toolbar-#{$color-name} ion-searchbar {
     .searchbar-search-icon {
       @include ios-searchbar-icon($searchbar-ios-input-search-icon-svg, $fg-color);
     }
