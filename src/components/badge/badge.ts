@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer, Attribute } from '@angular/core';
+import { Directive, ElementRef, Input, Renderer, Attribute } from '@angular/core';
 
 import { Config } from '../../config/config';
 
@@ -15,40 +15,41 @@ import { Config } from '../../config/config';
   selector: 'ion-badge'
 })
 export class Badge {
+  private _color: string;
+
+  /**
+   * @input {string} Dynamically set which predefined color this button should use (e.g. primary, secondary, danger, etc).
+   */
+  @Input()
+  get color(): string {
+    return this._color;
+  }
+
+  set color(value: string) {
+    this._updateColor(value);
+  }
 
   constructor(
     config: Config,
     private _elementRef: ElementRef,
     private _renderer: Renderer
-  ) {
-    let element = _elementRef.nativeElement;
+  ) { }
 
-    this._readAttrs(element);
+  /**
+   * @private
+   */
+  private  _updateColor(newColor: string) {
+    this._setElementColor(this._color, false);
+    this._setElementColor(newColor, true);
+    this._color = newColor;
   }
 
   /**
    * @private
    */
-  private _readAttrs(element: HTMLElement) {
-    let elementAttrs = element.attributes;
-    let attrName: string;
-
-    for (let i = 0, l = elementAttrs.length; i < l; i++) {
-      if (elementAttrs[i].value !== '') continue;
-
-      attrName = elementAttrs[i].name;
-
-      // Ignore attributes item-left, item-right
-      if (attrName.indexOf('item') === -1) {
-        this._setClass(attrName);
-      }
+  private _setElementColor(color: string, isAdd: boolean) {
+    if (color != null && color != '') {
+      this._renderer.setElementClass(this._elementRef.nativeElement, `badge-${color}`, isAdd);
     }
-  }
-
-  /**
-   * @private
-   */
-  private _setClass(color: string) {
-    this._renderer.setElementClass(this._elementRef.nativeElement, 'badge-' + color, true);
   }
 }
