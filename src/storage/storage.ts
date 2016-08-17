@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
 
-//declare var require: any;
-//const localforage: LocalForage = require("localforage");
 import * as LocalForage from 'localforage';
 
 //import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import { Config } from '../config/config';
-
-//console.log('LocalForageDriver', CordovaSQLiteDriver);
 
 /**
  * Storage is an easy way to store key/value pairs and other complicated
@@ -41,7 +37,6 @@ export class Storage {
       this._db = LocalForage;
     }
 
-    console.log(this._db);
     this._db.config({
       name        : '_ionicstorage',
       storeName   : '_ionickv'
