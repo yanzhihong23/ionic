@@ -1,0 +1,24 @@
+@import "./icon";
+
+// Windows Icon
+// --------------------------------------------------
+
+/// @prop - Color of the icon
+$icon-wp-color:        #000 !default;
+
+
+ion-icon {
+  color: $icon-wp-color;
+}
+
+
+// Generate Windows Icon Colors
+// --------------------------------------------------
+
+@each $color-name, $color-base, $color-contrast in get-colors($colors-wp) {
+
+  .icon-#{$color-name} {
+    color: $color-base;
+  }
+
+}

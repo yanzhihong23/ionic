@@ -1,0 +1,24 @@
+@import "./icon";
+
+// iOS Icon
+// --------------------------------------------------
+
+/// @prop - Color of the icon
+$icon-ios-color:        #000 !default;
+
+
+ion-icon {
+  color: $icon-ios-color;
+}
+
+
+// Generate iOS Icon Colors
+// --------------------------------------------------
+
+@each $color-name, $color-base, $color-contrast in get-colors($colors-ios) {
+
+  .icon-#{$color-name} {
+    color: $color-base;
+  }
+
+}
