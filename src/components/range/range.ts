@@ -226,6 +226,22 @@ export class Range implements AfterViewInit, ControlValueAccessor, OnDestroy {
    */
   value: any;
 
+
+  /** @internal */ 
+  _color: string;
+
+  /**
+   * @input {string} The predefined color to use. For example: `"primary"`, `"secondary"`, `"danger"`.
+   */
+  @Input()
+  get color(): string {
+    return this._color;
+  }
+
+  set color(value: string) {
+    this._updateColor(value);
+  }   
+
   @ViewChild('bar') private _bar: ElementRef;
   @ViewChild('slider') private _slider: ElementRef;
   @ViewChildren(RangeKnob) private _knobs: QueryList<RangeKnob>;
@@ -331,6 +347,7 @@ export class Range implements AfterViewInit, ControlValueAccessor, OnDestroy {
   constructor(
     private _form: Form,
     @Optional() private _item: Item,
+    private _elementRef: ElementRef,
     private _renderer: Renderer
   ) {
     _form.register(this);
@@ -583,6 +600,24 @@ export class Range implements AfterViewInit, ControlValueAccessor, OnDestroy {
     value = Math.round(clamp(this._min, value, this._max) / this._step) * this._step;
     return (value - this._min) / (this._max - this._min);
   }
+
+  /**
+   * @internal
+   */
+  _updateColor(newColor: string) {
+    this._setElementColor(this._color, false);
+    this._setElementColor(newColor, true);
+    this._color = newColor;
+  }
+
+  /**
+   * @internal
+   */
+  _setElementColor(color: string, isAdd: boolean) {
+    if (color !== null && color !== '') {
+      this._renderer.setElementClass(this._elementRef.nativeElement, `range-${color}`, isAdd);
+    }
+  }  
 
   /**
    * @private
