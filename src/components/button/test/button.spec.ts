@@ -1,5 +1,5 @@
-import { Button } from '../button';
-import { Config } from '../../../config/config';
+import { Button } from '../../../../src/components/button/button';
+import { Config } from '../../../../src/config/config';
 
 export function run() {
 

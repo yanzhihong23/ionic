@@ -249,11 +249,11 @@ function tsCompile(options, cacheName){
       'typings/main.d.ts',
       'src/**/*.ts',
       '!src/**/*.d.ts',
-      '!src/components/*/test/**/*',
+      '!src/components/*/test/*/*.ts',
       '!src/util/test/*',
       '!src/config/test/*',
       '!src/platform/test/*',
-      '!src/**/*.spec.ts'
+      'src/**/*.spec.ts'
     ])
     .pipe(cache(cacheName, { optimizeMemory: true }))
     .pipe(tsc(options, undefined, tscReporter));

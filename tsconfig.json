@@ -5,8 +5,9 @@
     "target": "es5",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "dist",
-    "noImplicitAny": true
+    "outDir": "dist/ide",
+    "noImplicitAny": true,
+    "types": ["jasmine"]
   },
   "filesGlob": [
     "src/**/*.ts",
@@ -17,6 +18,9 @@
     "scripts",
     "typings/main",
     "typings/main.d.ts"
+  ],
+  "include": [
+    "./src/**/*.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false,

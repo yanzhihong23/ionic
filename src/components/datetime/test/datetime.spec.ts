@@ -1,4 +1,10 @@
-import { DateTime, Form, Picker, Config, PickerController } from '../../../index';
+
+import { Config } from '../../../../src/config/config';
+import { DateTime } from '../../../../src/components/datetime/datetime';
+import { Form } from '../../../../src/util/form';
+import { Picker, PickerController } from '../../../../src/components/picker/picker';
+import { NavController } from '../../../../src/navigation/nav-controller';
+
 import * as datetime from '../../../../src/util/datetime-util';
 
 export function run() {
