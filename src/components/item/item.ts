@@ -307,6 +307,21 @@ export class Item {
    */
   labelId: string = null;
 
+  /** @internal */ 
+  _color: string;
+
+  /**
+   * @input {string} The predefined color to use. For example: `"primary"`, `"secondary"`, `"danger"`.
+   */
+  @Input()
+  get color(): string {
+    return this._color;
+  }
+
+  set color(value: string) {
+    this._updateColor(value);
+  }
+
   constructor(form: Form, private _renderer: Renderer, private _elementRef: ElementRef) {
     this.id = form.nextId().toString();
   }
@@ -401,6 +416,24 @@ export class Item {
    */
   setCssStyle(property: string, value: string) {
     this._renderer.setElementStyle(this._elementRef.nativeElement, property, value);
+  }
+
+  /**
+   * @internal
+   */
+  _updateColor(newColor: string) {
+    this._setElementColor(this._color, false);
+    this._setElementColor(newColor, true);
+    this._color = newColor;
+  }
+
+  /**
+   * @internal
+   */
+  _setElementColor(color: string, isAdd: boolean) {
+    if (color !== null && color !== '') {
+      this._renderer.setElementClass(this._elementRef.nativeElement, `item-${color}`, isAdd);
+    }
   }
 
   /**
