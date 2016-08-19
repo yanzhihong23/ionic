@@ -124,6 +124,12 @@ ion-radio {
 
 @mixin radio-theme-md($color-name, $color-base, $color-contrast) {
 
+  .item-radio-#{$color-name}.item-radio-checked {
+    ion-label {
+      color: $color-base;
+    }
+  }
+
   .radio-#{$color-name} {
 
     .radio-checked {

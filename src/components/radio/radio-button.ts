@@ -202,6 +202,10 @@ export class RadioButton implements OnDestroy, OnInit {
   _setElementColor(color: string, isAdd: boolean) {
     if (color !== null && color !== '') {
       this._renderer.setElementClass(this._elementRef.nativeElement, `radio-${color}`, isAdd);
+
+      if (this._item) {
+        this._item._updateColor(color, 'item-radio');
+      }
     }
   }  
 }

@@ -421,18 +421,20 @@ export class Item {
   /**
    * @internal
    */
-  _updateColor(newColor: string) {
-    this._setElementColor(this._color, false);
-    this._setElementColor(newColor, true);
+  _updateColor(newColor: string, colorClass?: string) {
+    this._setElementColor(this._color, false, colorClass);
+    this._setElementColor(newColor, true, colorClass);
     this._color = newColor;
   }
 
   /**
    * @internal
    */
-  _setElementColor(color: string, isAdd: boolean) {
+  _setElementColor(color: string, isAdd: boolean, colorClass?: string) {
+    colorClass = colorClass || 'item'; // item-radio
+
     if (color !== null && color !== '') {
-      this._renderer.setElementClass(this._elementRef.nativeElement, `item-${color}`, isAdd);
+      this._renderer.setElementClass(this._elementRef.nativeElement, `${colorClass}-${color}`, isAdd);
     }
   }
 
