@@ -102,7 +102,7 @@ export class Button {
   private _style: string = 'default'; // outline/clear/solid
   private _shape: string = null; // round/fab
   private _display: string = null; // block/full
-  private _colors: Array<string> = []; // primary/secondary
+  private _color: string = null; // primary/secondary
   private _icon: string = null; // left/right/only
   private _disabled: boolean = false; // disabled
   private _init: boolean;
@@ -200,8 +200,8 @@ export class Button {
   set color(val: string|string[]) {
     // Clear the colors for all styles including the default one.
     this._setColor(BUTTON_STYLE_ATTRS.concat(['default']), false);
-    // Support array input which is also supported via multiple attributes (e.g. primary, secondary, etc).
-    this._colors = (val instanceof Array ? val : [val]);
+
+    this._color = val;
     // Set the colors for the currently effective style.
     this._setColor(this._style, true);
   }
@@ -225,8 +225,6 @@ export class Button {
     if (ionButton.trim().length > 0) {
       this.setRole(ionButton);
     }
-
-    this._readAttrs(element);
   }
 
   /**
@@ -258,35 +256,6 @@ export class Button {
     this._assignCss(false);
     this._role = val;
     this._assignCss(true);
-  }
-
-  /**
-   * @private
-   */
-  private _readAttrs(element: HTMLElement) {
-    let elementAttrs = element.attributes;
-    let attrName: string;
-    for (let i = 0, l = elementAttrs.length; i < l; i++) {
-      if (elementAttrs[i].value !== '') continue;
-
-      attrName = elementAttrs[i].name;
-
-      if (BUTTON_STYLE_ATTRS.indexOf(attrName) > -1) {
-        this._style = attrName;
-
-      } else if (BUTTON_DISPLAY_ATTRS.indexOf(attrName) > -1) {
-        this._display = attrName;
-
-      } else if (BUTTON_SHAPE_ATTRS.indexOf(attrName) > -1) {
-        this._shape = attrName;
-
-      } else if (BUTTON_SIZE_ATTRS.indexOf(attrName) > -1) {
-        this._size = attrName;
-
-      } else if (!(IGNORE_ATTRS.test(attrName))) {
-        this._colors.push(attrName);
-      }
-    }
   }
 
   /**
@@ -326,9 +295,7 @@ export class Button {
         // If the role is not a bar-button, don't apply the solid style
         styleName = (this._role !== 'bar-button' && styleName === 'solid' ? 'default' : styleName);
         let colorStyle = (styleName !== null && styleName !== 'default' ? styleName.toLowerCase() + '-' : '');
-        this._colors.forEach(colorName => {
-          this._setClass(colorStyle + colorName, assignCssClass); // button-secondary, button-clear-secondary
-        });
+        this._setClass(colorStyle + this._color, assignCssClass); // button-secondary, button-clear-secondary
       });
     }
   }

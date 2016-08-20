@@ -21,10 +21,6 @@
   <button ion-button block [color]="isSecondary ? 'secondary' : 'primary'"  [clear]="isClear">Secondary (Clear)</button>
   <button ion-button block [color]="myColor1" [round]="isCustom">Custom #1</button>
   <button ion-button block [color]="myColor2" [outline]="isOutline" [round]="isCustom">Custom #2 (Outline)</button>
-  <button ion-button block primary light [clear]="isClear" [round]="isCustom">Multicolor (Clear)</button>
-  <button ion-button block danger dark [outline]="isOutline" [round]="isCustom">Multicolor (Outline)</button>
-  <button ion-button block [color]="multiColor" [outline]="isClicked" [round]="isCustom" (click)="toggle()">Multicolor Outline (Toggle)</button>
-  <button ion-button block [color]="multiColor" [clear]="isClicked" [round]="isCustom" (click)="toggle()">Multicolor Clear (Toggle)</button>
   <hr/>
   <button ion-button block outline danger (click)="showIf = !showIf">Toggle Header</button>
   <hr/>
