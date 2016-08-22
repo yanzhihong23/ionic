@@ -205,7 +205,7 @@ ion-buttons[right] {
 @mixin ios-bar-button-outline($color-name, $color-base, $color-contrast) {
 
   .bar-button-outline-#{$color-name} {
-    $fg-color: color-shade($color-base);
+    $fg-color: $color-base;
     border-color: $fg-color;
     color: $fg-color;
     background-color: transparent;
