@@ -389,6 +389,7 @@ export class Item {
       // Don't add the item-button class if the user specifies
       // a different size button
       if (!button.isItem && !button._size) {
+        console.log('Im a button in an item')
         button.addClass('item-button');
       }
     });
