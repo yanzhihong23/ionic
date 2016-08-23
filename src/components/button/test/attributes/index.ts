@@ -6,7 +6,7 @@ import { App, ionicBootstrap } from '../../../../../src';
   templateUrl: 'main.html'
 })
 class E2EPage {
-  isFull: boolean = false;
+  isFull: boolean = true;
   isBlock: boolean = true;
   isBarClear: boolean = true;
 
