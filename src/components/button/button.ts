@@ -197,6 +197,7 @@ export class Button {
     } else {
       // Special handling for '_style' which defaults to 'default'.
       this[type] = (type === '_style' ? 'default' : null);
+      this._setClass(this[type], true);
     }
   }
 
