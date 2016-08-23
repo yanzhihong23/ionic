@@ -5,7 +5,7 @@
       <button ion-button>Default</button>
       <button ion-button solid>Solid</button>
       <button ion-button outline>Outline</button>
-      <button ion-button clear>Clear</button>
+      <button ion-button [clear]="isBarClear" (click)="toggleBarClear()">Clear</button>
     </ion-buttons>
   </ion-toolbar>
 
@@ -15,24 +15,18 @@
 <ion-content padding style="text-align:center" no-bounce>
   <h5>Button Displays</h5>
   <button ion-button [full]="isFull" [block]="isBlock" (click)="toggleBlock()">Block (toggle)</button>
-  <button ion-button [full]="isFull" block="false">Full</button>
+  <button ion-button [full]="isFull">Full</button>
   <button ion-button full block>Both</button>
 
   <h5>Button Styles (Click to Toggle)</h5>
   <button ion-button [solid]="isSolid" (click)="toggleStyles()">Solid</button>
-  <button ion-button [outline]="isOutline" solid="false" (click)="toggleStyles()">Outline</button>
-  <button ion-button outline="false" [clear]="isClear" (click)="toggleStyles()">Clear</button>
+  <button ion-button [outline]="isOutline" (click)="toggleStyles()">Outline</button>
+  <button ion-button [clear]="isClear" (click)="toggleStyles()">Clear</button>
 
   <h5>Button Sizes</h5>
   <button ion-button small="true">Small</button>
-  <button ion-button default="true" large="false">Default</button>
-  <button ion-button small="false" large>Large</button>
-
-  <ion-item>
-    <button item-right ion-button small="true">Small</button>
-    <button item-right ion-button default="true" large="false">Default</button>
-    <button item-right ion-button small="false" large>Large</button>
-  </ion-item>
+  <button ion-button default="true">Default</button>
+  <button ion-button large>Large</button>
 
   <h5>Button Colors (Click to Toggle)</h5>
   <button ion-button block [color]="isSecondary" (click)="toggleColors()">Block</button>

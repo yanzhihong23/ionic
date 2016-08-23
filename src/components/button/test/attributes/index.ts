@@ -8,6 +8,7 @@ import { App, ionicBootstrap } from '../../../../../src';
 class E2EPage {
   isFull: boolean = false;
   isBlock: boolean = true;
+  isBarClear: boolean = true;
 
   // Styles
   isSolid: boolean = true;
@@ -40,6 +41,10 @@ class E2EPage {
     this.isSecondary = (this.isSecondary === 'secondary' ? '' : 'secondary');
     this.isDanger = (this.isDanger === 'danger' ? '' : 'danger');
     this.isDark = (this.isDark === 'dark' ? '' : 'dark');
+  }
+
+  toggleBarClear() {
+    this.isBarClear = !this.isBarClear;
   }
 
   removeColors() {
