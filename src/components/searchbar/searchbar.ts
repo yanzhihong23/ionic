@@ -30,7 +30,7 @@ import { Debouncer } from '../../util/debouncer';
   selector: 'ion-searchbar',
   template:
     '<div class="searchbar-input-container">' +
-      '<button ion-button (click)="cancelSearchbar($event)" (mousedown)="cancelSearchbar($event)" clear dark class="searchbar-md-cancel">' +
+      '<button ion-button (click)="cancelSearchbar($event)" (mousedown)="cancelSearchbar($event)" clear color="dark" class="searchbar-md-cancel">' +
         '<ion-icon name="arrow-back"></ion-icon>' +
       '</button>' +
       '<div #searchbarIcon class="searchbar-search-icon"></div>' +
@@ -54,7 +54,7 @@ export class Searchbar {
   private _searchbarInput: ElementRef;
   private _debouncer: Debouncer = new Debouncer(250);
 
-  /** @internal */ 
+  /** @internal */
   _color: string;
 
   /**
@@ -67,7 +67,7 @@ export class Searchbar {
 
   set color(value: string) {
     this._updateColor(value);
-  }  
+  }
 
   /**
    * @input {string} Set the the cancel button text. Default: `"Cancel"`.
@@ -377,7 +377,7 @@ export class Searchbar {
     if (color !== null && color !== '') {
       this._renderer.setElementClass(this._elementRef.nativeElement, `searchbar-${color}`, isAdd);
     }
-  }  
+  }
 
   /**
    * @private

@@ -257,7 +257,7 @@ import { Label } from '../label/label';
  *       Item
  *     </ion-item>
  *     <ion-item-options>
- *       <button ion-button primary (click)="archive()">Archive</button>
+ *       <button ion-button color="primary" (click)="archive()">Archive</button>
  *     </ion-item-options>
  *   </ion-item-sliding>
  *
@@ -307,7 +307,7 @@ export class Item {
    */
   labelId: string = null;
 
-  /** @internal */ 
+  /** @internal */
   _color: string;
 
   /**

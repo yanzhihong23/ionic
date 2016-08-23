@@ -14,7 +14,7 @@ import { isPresent, isTrueProperty } from '../../util/util';
  * ```html
  * <ion-content>
  *   <!-- Segment buttons with icons -->
- *   <ion-segment [(ngModel)]="icons" secondary>
+ *   <ion-segment [(ngModel)]="icons" color="secondary">
  *     <ion-segment-button value="camera">
  *       <ion-icon name="camera"></ion-icon>
  *     </ion-segment-button>
@@ -24,7 +24,7 @@ import { isPresent, isTrueProperty } from '../../util/util';
  *   </ion-segment>
  *
  *   <!-- Segment buttons with text -->
- *   <ion-segment [(ngModel)]="relationship" primary>
+ *   <ion-segment [(ngModel)]="relationship" color="primary">
  *     <ion-segment-button value="friends" (ionSelect)="selectedFriends()">
  *       Friends
  *     </ion-segment-button>
@@ -130,7 +130,7 @@ export class SegmentButton {
  * <!-- Segment in a header -->
  * <ion-header>
  *   <ion-toolbar>
- *     <ion-segment [(ngModel)]="icons" secondary>
+ *     <ion-segment [(ngModel)]="icons" color="secondary">
  *       <ion-segment-button value="camera">
  *         <ion-icon name="camera"></ion-icon>
  *       </ion-segment-button>
@@ -143,7 +143,7 @@ export class SegmentButton {
  *
  * <ion-content>
  *   <!-- Segment in content -->
- *   <ion-segment [(ngModel)]="relationship" primary>
+ *   <ion-segment [(ngModel)]="relationship" color="primary">
  *     <ion-segment-button value="friends" (ionSelect)="selectedFriends()">
  *       Friends
  *     </ion-segment-button>
@@ -154,7 +154,7 @@ export class SegmentButton {
  *
  *   <!-- Segment in a form -->
  *   <form [formGroup]="myForm">
- *     <ion-segment formControlName="mapStyle" danger>
+ *     <ion-segment formControlName="mapStyle" color="danger">
  *       <ion-segment-button value="standard">
  *         Standard
  *       </ion-segment-button>
@@ -185,7 +185,7 @@ export class Segment {
    */
   value: string;
 
-  /** @internal */ 
+  /** @internal */
   _color: string;
 
   /**
@@ -198,7 +198,7 @@ export class Segment {
 
   set color(value: string) {
     this._updateColor(value);
-  }  
+  }
 
   /**
    * @output {Any}  expression to evaluate when a segment button has been changed
@@ -256,7 +256,7 @@ export class Segment {
     if (color !== null && color !== '') {
       this._renderer.setElementClass(this._elementRef.nativeElement, `segment-${color}`, isAdd);
     }
-  }  
+  }
 
   /**
    * @private
