@@ -60751,9 +60751,8 @@ note = uniF445;
 unicode = F445;
 },
 {
-export = 0;
 glyphname = uniF446;
-lastChange = "2016-08-30 05:18:41 +0000";
+lastChange = "2016-08-30 09:02:00 +0000";
 layers = (
 {
 layerId = "7CC436F9-9F12-4208-AF2B-E4ABCB0FA991";
