@@ -9,6 +9,7 @@
 .#{$ionicons-prefix}arrow-down-b:before,
 .#{$ionicons-prefix}arrow-up-b:before,
 .#{$ionicons-prefix}eye:before,
+.#{$ionicons-prefix}eye-disabled:before,
 .#{$ionicons-prefix}ios-arrow-down:before,
 .#{$ionicons-prefix}ios-arrow-left:before,
 .#{$ionicons-prefix}ios-arrow-right:before,
@@ -33,6 +34,7 @@
 .#{$ionicons-prefix}arrow-down-b:before { content: $ionicon-var-arrow-down-b; }
 .#{$ionicons-prefix}arrow-up-b:before { content: $ionicon-var-arrow-up-b; }
 .#{$ionicons-prefix}eye:before { content: $ionicon-var-eye; }
+.#{$ionicons-prefix}eye-disabled:before { content: $ionicon-var-eye-disabled; }
 .#{$ionicons-prefix}ios-arrow-down:before { content: $ionicon-var-ios-arrow-down; }
 .#{$ionicons-prefix}ios-arrow-left:before { content: $ionicon-var-ios-arrow-left; }
 .#{$ionicons-prefix}ios-arrow-right:before { content: $ionicon-var-ios-arrow-right; }
